@@ -5,6 +5,7 @@
 
 using EasyPay.Api.Models.Clients;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EasyPay.Api.Brokers.Storages
@@ -15,5 +16,8 @@ namespace EasyPay.Api.Brokers.Storages
 
         public async ValueTask<Client> InsertClientAsync(Client client) =>
             await InsertAsync(client);
+
+        public IQueryable<Client> SelectAllClients(Client client) =>
+            SelectAll(client);
     }
 }

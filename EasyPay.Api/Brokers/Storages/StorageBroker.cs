@@ -7,6 +7,7 @@ using EasyPay.Api.Models.Clients;
 using EFxceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EasyPay.Api.Brokers.Storages
@@ -28,6 +29,13 @@ namespace EasyPay.Api.Brokers.Storages
             await broker.SaveChangesAsync();
 
             return @object;
+        }
+
+        public IQueryable<T> SelectAll<T>(T @object) where T : class
+        {
+            var broker = new StorageBroker(configuration);
+
+            return broker.Set<T>();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
