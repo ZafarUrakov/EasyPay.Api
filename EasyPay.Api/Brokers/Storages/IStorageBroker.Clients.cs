@@ -3,15 +3,13 @@
 // Manage Your Money Easy
 //===========================
 
-using EasyPay.Api.Models.Accounts;
-using Microsoft.EntityFrameworkCore;
+using EasyPay.Api.Models.Clients;
+using System.Threading.Tasks;
 
 namespace EasyPay.Api.Brokers.Storages
 {
-    public partial class StorageBroker
+    public partial interface IStorageBroker
     {
-        public DbSet<Account> Accounts { get; set; }
-
-
+        ValueTask<Client> InsertClientAsync(Client salary);
     }
 }
