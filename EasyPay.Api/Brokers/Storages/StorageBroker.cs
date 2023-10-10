@@ -44,6 +44,15 @@ namespace EasyPay.Api.Brokers.Storages
             return await broker.FindAsync<T>(objectsId);
         }
 
+        public async ValueTask<T> UpdateAsync<T>(T @object)
+        {
+            var broker = new StorageBroker(configuration);
+            broker.Entry(@object).State = EntityState.Modified;
+            await broker.SaveChangesAsync();
+
+            return @object;
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             string connectionString = this.configuration
