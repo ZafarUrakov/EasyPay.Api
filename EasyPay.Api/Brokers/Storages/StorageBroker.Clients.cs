@@ -22,5 +22,8 @@ namespace EasyPay.Api.Brokers.Storages
 
         public async ValueTask<Client> SelectByIdClient(Client client) =>
             await SelectAsync<Client>(client);
+
+        public async ValueTask<Client> UpdateClientAsync(Client client) =>
+            await UpdateAsync(client);
     }
 }
