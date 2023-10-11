@@ -38,9 +38,9 @@ namespace EasyPay.Api.Services.Foundations.Clients
             }
             catch (SqlException sqlException)
             {
-                var failedServiceStrageException = new FailedServiceStrageException(sqlException);
+                var failedClientStrageException = new FailedClientStorageException(sqlException);
 
-                throw CreateAndLogCriticalDependencyException(failedServiceStrageException);
+                throw CreateAndLogCriticalDependencyException(failedClientStrageException);
             }
             catch (DuplicateKeyException duplicateKeyException)
             {
@@ -56,7 +56,7 @@ namespace EasyPay.Api.Services.Foundations.Clients
             }
             catch (DbUpdateException dbUpdateException)
             {
-                var failedServiceStrageException = new FailedServiceStrageException(dbUpdateException);
+                var failedServiceStrageException = new FailedClientStorageException(dbUpdateException);
 
                 throw CreateAndLogDependencyException(failedServiceStrageException);
             }
@@ -68,7 +68,7 @@ namespace EasyPay.Api.Services.Foundations.Clients
             }
         }
 
-        private Exception CreateAndLogServiceException(Xeption innerException)
+        private ClientServiceException CreateAndLogServiceException(Xeption innerException)
         {
             var clientServiceException = new ClientServiceException(innerException);
             this.loggingBroker.LogError(clientServiceException);

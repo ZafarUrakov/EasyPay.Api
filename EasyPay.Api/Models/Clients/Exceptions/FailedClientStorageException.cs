@@ -8,9 +8,9 @@ using Xeptions;
 
 namespace EasyPay.Api.Models.Clients.Exceptions
 {
-    public class FailedServiceStrageException : Xeption
+    public class FailedClientStorageException : Xeption
     {
-        public FailedServiceStrageException(Exception innerException)
+        public FailedClientStorageException(Exception innerException)
             : base(message: "Failed client storage error occurred, contact support.", innerException)
         { }
     }
