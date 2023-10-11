@@ -13,7 +13,7 @@ namespace EasyPay.Api.Services.Foundations.Clients
     {
         private void ValidateClientOnAdd(Client client)
         {
-            ValidaClientNotNull(client);
+            ValidateClientNotNull(client);
 
             Validate(
                 (Rule: IsInvalid(client.ClientId), Parameter: nameof(Client.ClientId)),
@@ -77,7 +77,7 @@ namespace EasyPay.Api.Services.Foundations.Clients
             return timeDifference.TotalSeconds is > 70 or < 0;
         }
 
-        private static void ValidaClientNotNull(Client client)
+        private static void ValidateClientNotNull(Client client)
         {
             if (client == null)
             {
@@ -87,13 +87,13 @@ namespace EasyPay.Api.Services.Foundations.Clients
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
-            var invalidJobException = new InvalidClientException();
+            var invalidClientException = new InvalidClientException();
 
             foreach ((dynamic rule, string parameter) in validations)
             {
                 if (rule.Condition)
                 {
-                    invalidJobException.UpsertDataList(
+                    invalidClientException.UpsertDataList(
                         key: parameter,
                         value: rule.Message);
                 }
