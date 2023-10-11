@@ -27,11 +27,12 @@ namespace EasyPay.Api.Services.Foundations.Clients
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<Client> AddClientAsync(Client client)
+        public ValueTask<Client> AddClientAsync(Client client) =>
+        TryCatch(async () =>
         {
             ValidateClientOnAdd(client);
 
             return await this.storageBroker.InsertClientAsync(client);
-        }
+        });
     }
 }
