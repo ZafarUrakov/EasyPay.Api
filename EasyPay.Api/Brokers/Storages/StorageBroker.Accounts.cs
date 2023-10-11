@@ -5,6 +5,7 @@
 
 using EasyPay.Api.Models.Accounts;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,5 +20,7 @@ namespace EasyPay.Api.Brokers.Storages
         
         public IQueryable<Account> SelectAllAccounts(Account account) =>
             SelectAll(account);
+        public async ValueTask<Account> SelectAccountByIdAsync(Guid accountId) =>
+            await SelectAsync<Account>(accountId);
     }
 }
