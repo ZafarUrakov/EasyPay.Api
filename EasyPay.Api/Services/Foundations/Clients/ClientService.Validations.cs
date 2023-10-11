@@ -99,7 +99,7 @@ namespace EasyPay.Api.Services.Foundations.Clients
                 }
             }
 
-            invalidJobException.ThrowIfContainsErrors();
+            invalidClientException.ThrowIfContainsErrors();
         }
     }
 }
