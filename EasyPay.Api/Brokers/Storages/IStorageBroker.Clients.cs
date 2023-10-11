@@ -12,7 +12,7 @@ namespace EasyPay.Api.Brokers.Storages
 {
     public partial interface IStorageBroker
     {
-        ValueTask<Client> InsertClientAsync(Client salary);
+        ValueTask<Client> InsertClientAsync(Client client);
         IQueryable<Client> SelectAllClients(Client client);
         ValueTask<Client> SelectByIdClient(Guid clientId);
         ValueTask<Client> UpdateClientAsync(Client client);
