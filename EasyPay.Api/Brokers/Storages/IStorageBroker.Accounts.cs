@@ -4,6 +4,7 @@
 //===========================
 
 using EasyPay.Api.Models.Accounts;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EasyPay.Api.Brokers.Storages
@@ -11,5 +12,6 @@ namespace EasyPay.Api.Brokers.Storages
     public partial interface IStorageBroker
     {
         ValueTask<Account> InsertAccountAsync(Account account);
+        IQueryable<Account> SelectAllAccounts(Account account);
     }
 }
