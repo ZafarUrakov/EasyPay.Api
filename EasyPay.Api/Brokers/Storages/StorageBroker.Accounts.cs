@@ -11,7 +11,5 @@ namespace EasyPay.Api.Brokers.Storages
     public partial class StorageBroker
     {
         public DbSet<Account> Accounts { get; set; }
-
-
     }
 }
