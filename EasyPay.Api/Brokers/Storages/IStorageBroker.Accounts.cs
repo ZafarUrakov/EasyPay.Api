@@ -16,5 +16,6 @@ namespace EasyPay.Api.Brokers.Storages
         IQueryable<Account> SelectAllAccounts(Account account);
         ValueTask<Account> SelectAccountByIdAsync(Guid accountId);
         ValueTask<Account> UpdateAccountAsync(Account account);
+        ValueTask<Account> DeleteAccountAsync(Account account);
     }
 }
