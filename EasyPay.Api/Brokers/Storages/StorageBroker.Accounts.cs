@@ -22,5 +22,8 @@ namespace EasyPay.Api.Brokers.Storages
             SelectAll(account);
         public async ValueTask<Account> SelectAccountByIdAsync(Guid accountId) =>
             await SelectAsync<Account>(accountId);
+        public async ValueTask<Account> UpdateAccountAsync(Account account) =>
+            await UpdateAsync(account);
+
     }
 }
