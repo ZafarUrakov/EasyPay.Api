@@ -3,9 +3,13 @@
 // Manage Your Money Easy
 //===========================
 
+using EasyPay.Api.Models.Accounts;
+using System.Threading.Tasks;
+
 namespace EasyPay.Api.Brokers.Storages
 {
     public partial interface IStorageBroker
     {
+        ValueTask<Account> InsertAccountAsync(Account account);
     }
 }
