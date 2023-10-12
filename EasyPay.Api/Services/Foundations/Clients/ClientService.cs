@@ -7,6 +7,7 @@ using EasyPay.Api.Brokers.DateTimes;
 using EasyPay.Api.Brokers.Loggings;
 using EasyPay.Api.Brokers.Storages;
 using EasyPay.Api.Models.Clients;
+using System;
 using System.Threading.Tasks;
 
 namespace EasyPay.Api.Services.Foundations.Clients
@@ -19,11 +20,9 @@ namespace EasyPay.Api.Services.Foundations.Clients
 
         public ClientService(
             IStorageBroker storageBroker, 
-            IDateTimeBroker dateTimeBroker, 
             ILoggingBroker loggingBroker)
         {
             this.storageBroker = storageBroker;
-            this.dateTimeBroker = dateTimeBroker;
             this.loggingBroker = loggingBroker;
         }
 
@@ -32,7 +31,7 @@ namespace EasyPay.Api.Services.Foundations.Clients
         {
             ValidateClientOnAdd(client);
 
-            return await this.storageBroker.InsertClientAsync(client);
+            throw new NotImplementedException();
         });
     }
 }
