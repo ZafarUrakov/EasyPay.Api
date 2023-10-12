@@ -18,7 +18,7 @@ namespace EasyPay.Api.Services.Foundations.Clients
         private readonly ILoggingBroker loggingBroker;
 
         public ClientService(
-            IStorageBroker storageBroker, 
+            IStorageBroker storageBroker,
             ILoggingBroker loggingBroker)
         {
             this.storageBroker = storageBroker;
