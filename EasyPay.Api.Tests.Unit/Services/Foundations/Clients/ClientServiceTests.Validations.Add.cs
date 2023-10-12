@@ -79,15 +79,15 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
 
             invalidClientException.AddData(
                 key: nameof(Client.Email),
-                values: "Email is required");
+                values: "Text is required");
 
             invalidClientException.AddData(
                 key: nameof(Client.PhoneNumber),
-                values: "Phone number is required");
+                values: "Text is required");
 
             invalidClientException.AddData(
                 key: nameof(Client.Address),
-                values: "Address is required");
+                values: "Text is required");
 
             var expectedClientValidationException = 
                 new ClientValidationException(invalidClientException);
