@@ -5,7 +5,7 @@ VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyPay.Api", "EasyPay.Api\EasyPay.Api.csproj", "{0F5F84C9-4C45-4771-AB03-3B70892A5B44}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyPay.Api.Tests.Unit", "EasyPay.Api.Tests.Unit\EasyPay.Api.Tests.Unit.csproj", "{500966C9-CBB8-4995-961B-F58AB1765B36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyPay.Api.Tests.Unit", "EasyPay.Api.Tests.Unit\EasyPay.Api.Tests.Unit.csproj", "{500966C9-CBB8-4995-961B-F58AB1765B36}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

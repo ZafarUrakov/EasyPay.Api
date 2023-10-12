@@ -18,8 +18,8 @@ namespace EasyPay.Api.Services.Foundations.Clients
         private readonly ILoggingBroker loggingBroker;
 
         public ClientService(
-            IStorageBroker storageBroker, 
-            IDateTimeBroker dateTimeBroker, 
+            IStorageBroker storageBroker,
+            IDateTimeBroker dateTimeBroker,
             ILoggingBroker loggingBroker)
         {
             this.storageBroker = storageBroker;
@@ -27,11 +27,12 @@ namespace EasyPay.Api.Services.Foundations.Clients
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<Client> AddClientAsync(Client client)
+        public ValueTask<Client> AddClientAsync(Client client) =>
+        TryCatch(async () =>
         {
             ValidateClientOnAdd(client);
 
             return await this.storageBroker.InsertClientAsync(client);
-        }
+        });
     }
 }
