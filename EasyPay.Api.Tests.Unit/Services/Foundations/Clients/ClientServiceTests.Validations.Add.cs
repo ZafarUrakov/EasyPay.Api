@@ -45,5 +45,73 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task ShouldThrowValidationExceptionOnAddIfClientIsInvalidAndLogItAsync(
+            string invalidText)
+        {
+            // given
+            var invalidClient = new Client
+            {
+                FirstName = invalidText,
+            };
+
+            var invalidClientException = new InvalidClientException();
+
+            invalidClientException.AddData(
+                key: nameof(Client.ClientId),
+                values: "Id is required");
+            
+            invalidClientException.AddData(
+                key: nameof(Client.FirstName),
+                values: "Text is required");
+            
+            invalidClientException.AddData(
+                key: nameof(Client.LastName),
+                values: "Text is required");
+
+            invalidClientException.AddData(
+                key: nameof(Client.BirthDate),
+                values: "Date is required");
+
+            invalidClientException.AddData(
+                key: nameof(Client.Email),
+                values: "Email is required");
+
+            invalidClientException.AddData(
+                key: nameof(Client.PhoneNumber),
+                values: "Phone number is required");
+
+            invalidClientException.AddData(
+                key: nameof(Client.Address),
+                values: "Address is required");
+
+            var expectedClientValidationException = 
+                new ClientValidationException(invalidClientException);
+
+            // when
+            ValueTask<Client> addClientTask = 
+                this.clientService.AddClientAsync(invalidClient);
+
+            ClientValidationException actualClientValidationException =
+                await Assert.ThrowsAsync<ClientValidationException>(addClientTask.AsTask);
+
+            // then
+            actualClientValidationException.Should()
+                .BeEquivalentTo(expectedClientValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+            broker.LogError(It.Is(SameExceptionAs(
+                expectedClientValidationException))), Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+            broker.InsertClientAsync(It.IsAny<Client>()), Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
