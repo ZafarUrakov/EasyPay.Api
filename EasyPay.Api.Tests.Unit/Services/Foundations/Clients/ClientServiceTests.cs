@@ -10,7 +10,9 @@ using EasyPay.Api.Models.Clients;
 using EasyPay.Api.Services.Foundations.Clients;
 using Moq;
 using System;
+using System.Linq.Expressions;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
 {
@@ -30,6 +32,9 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
                     this.storageBrokerMock.Object,
                     this.loggingBrokerMock.Object);
         }
+
+        private Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+            actualException => actualException.SameExceptionAs(actualException);
 
         private static Client CreateRandomClient() =>
             CreateClientFiller(GetRandomDateTime()).Create();

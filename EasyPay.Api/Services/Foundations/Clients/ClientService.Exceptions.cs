@@ -103,7 +103,7 @@ namespace EasyPay.Api.Services.Foundations.Clients
         private ClientValidationException CreateAndLogValidationException(Xeption exception)
         {
             var clientValidationException = new ClientValidationException(exception);
-            this.loggingBroker.LogCritical(clientValidationException);
+            this.loggingBroker.LogError(clientValidationException);
 
             return clientValidationException;
         }
