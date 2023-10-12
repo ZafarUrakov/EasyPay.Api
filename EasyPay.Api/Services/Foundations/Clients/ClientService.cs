@@ -19,9 +19,11 @@ namespace EasyPay.Api.Services.Foundations.Clients
 
         public ClientService(
             IStorageBroker storageBroker,
+            IDateTimeBroker dateTimeBroker,
             ILoggingBroker loggingBroker)
         {
             this.storageBroker = storageBroker;
+            this.dateTimeBroker = dateTimeBroker;
             this.loggingBroker = loggingBroker;
         }
 

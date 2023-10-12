@@ -19,18 +19,20 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
     public partial class ClientServiceTests
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
-        private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
+        private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly IClientService clientService;
 
         public ClientServiceTests()
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
+            this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
             this.clientService =
                 new ClientService(
-                    this.storageBrokerMock.Object,
-                    this.loggingBrokerMock.Object);
+                    storageBroker: this.storageBrokerMock.Object,
+                    dateTimeBroker: this.dateTimeBrokerMock.Object,
+                    loggingBroker: this.loggingBrokerMock.Object);
         }
 
         private Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
