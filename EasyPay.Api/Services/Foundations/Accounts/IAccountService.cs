@@ -3,8 +3,8 @@
 // Manage Your Money Easy
 //===========================
 
-using System.Threading.Tasks;
 using EasyPay.Api.Models.Accounts;
+using System.Threading.Tasks;
 
 namespace EasyPay.Api.Services.Foundations.Accounts
 {

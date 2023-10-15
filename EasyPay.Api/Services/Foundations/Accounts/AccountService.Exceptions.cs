@@ -3,13 +3,13 @@
 // Manage Your Money Easy
 //===========================
 
-using System;
-using System.Threading.Tasks;
 using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Accounts.Exceptions;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 using Xeptions;
 
 namespace EasyPay.Api.Services.Foundations.Accounts
@@ -39,28 +39,28 @@ namespace EasyPay.Api.Services.Foundations.Accounts
 
                 throw CreateAndLogDependencyValidationException(alreadyExistsAccountException);
             }
-            catch(SqlException sqlException)
+            catch (SqlException sqlException)
             {
                 var failedStorageAccountException =
                     new FailedStorageAccountException(sqlException);
 
                 throw CreateAndLogAccountServiceException(failedStorageAccountException);
             }
-            catch(DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
             {
                 var lockedAccountException =
                     new LockedAccountException(dbUpdateConcurrencyException);
 
                 throw CreateAndLogDependencyException(lockedAccountException);
             }
-            catch(DbUpdateException dbUpdateException)
+            catch (DbUpdateException dbUpdateException)
             {
                 var failedStorageAccountException =
                     new FailedStorageAccountException(dbUpdateException);
 
                 throw CreateAndLogCriticalDependencyException(failedStorageAccountException);
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 var failedAccountServiceException =
                     new FailedAccountServiceException(exception);

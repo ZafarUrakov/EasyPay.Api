@@ -3,11 +3,9 @@
 // Manage Your Money Easy
 //===========================
 
-using System;
-using System.Data;
 using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Accounts.Exceptions;
-using EasyPay.Api.Models.Clients;
+using System;
 
 namespace EasyPay.Api.Services.Foundations.Accounts
 {
@@ -34,7 +32,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         }
 
         private dynamic IsInvalid(string text) => new
-        { 
+        {
             Condition = string.IsNullOrWhiteSpace(text),
             Message = "Text is required"
         };
@@ -57,7 +55,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
 
             foreach ((dynamic rule, string parameter) in validations)
             {
-                if(rule.Condition)
+                if (rule.Condition)
                 {
                     invalidAccountException.UpsertDataList(
                         key: parameter,
