@@ -38,6 +38,9 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
                     loggingBroker: this.loggingBrokerMock.Object);
         }
 
+        private string GetRandomString() =>
+            new MnemonicString().GetValue();
+
         private static Account CreateRandomAccount() =>
             CreateAccountFiller(date: GetRandomDateTimeOffset()).Create();
 

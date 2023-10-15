@@ -6,6 +6,7 @@
 using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Accounts.Exceptions;
 using EasyPay.Api.Models.Clients.Exceptions;
+using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
@@ -25,17 +26,17 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
 
             SqlException sqlException = GetSqlError();
 
-            var failedAccountStorageException = 
+            var failedAccountStorageException =
                 new FailedStorageAccountException(sqlException);
 
-            var expectedAccountDependencyException = 
+            var expectedAccountDependencyException =
                 new AccountDependencyException(failedAccountStorageException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.InsertAccountAsync(someAccount)).ThrowsAsync(sqlException);
 
             // when
-            ValueTask<Account> addAccountTask = 
+            ValueTask<Account> addAccountTask =
                 this.accountService.AddAccountAsync(someAccount);
 
             var actualAccountDependencyException =
@@ -51,6 +52,46 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
             this.loggingBrokerMock.Verify(broker =>
             broker.LogCritical(It.Is(SameExceptionAs(
                 expectedAccountDependencyException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnAddIfDuplicateKeyErrorOccursAndLogItAsync()
+        {
+            // given 
+            string someMessage = GetRandomString();
+            Account someAccount = CreateRandomAccount();
+            var duplicateKeyException = new DuplicateKeyException(someMessage);
+
+            var alreadyExistsAccountException = 
+                new AlreadyExistsAccountException(duplicateKeyException);
+
+            var expectedAccountDependencyValidationException =
+                new AccountDependencyValidationException(alreadyExistsAccountException);
+
+            this.storageBrokerMock.Setup(broker =>
+            broker.InsertAccountAsync(someAccount)).ThrowsAsync(duplicateKeyException);
+
+            // when
+            ValueTask<Account> addApplicantTask =
+                this.accountService.AddAccountAsync(someAccount);
+
+            var actualaAccountDependencyValidationException = await Assert
+                .ThrowsAsync<AccountDependencyValidationException>(addApplicantTask.AsTask);
+
+            //then
+            actualaAccountDependencyValidationException.Should()
+                .BeEquivalentTo(expectedAccountDependencyValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertAccountAsync(someAccount), Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedAccountDependencyValidationException))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
