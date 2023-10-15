@@ -18,11 +18,11 @@ namespace EasyPay.Api.Services.Foundations.Accounts
     {
         private delegate ValueTask<Account> ReturningAccountFunction();
 
-        private ValueTask<Account> TryCatch(ReturningAccountFunction returningAccountFunction)
+        private async ValueTask<Account> TryCatch(ReturningAccountFunction returningAccountFunction)
         {
             try
             {
-                return returningAccountFunction();
+                return await returningAccountFunction();
             }
             catch (NullAccountException accountNotNull)
             {
@@ -72,7 +72,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         private AccountValidationException CreateAndLogValidationException(Xeption exception)
         {
             var accountValidationException = new AccountValidationException(exception);
-            this.loggingBroker.LogCritical(accountValidationException);
+            this.loggingBroker.LogError(accountValidationException);
 
             return accountValidationException;
         }

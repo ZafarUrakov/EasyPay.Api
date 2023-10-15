@@ -45,7 +45,6 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

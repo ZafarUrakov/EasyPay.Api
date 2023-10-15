@@ -40,7 +40,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
             CreateAccountFiller(date: GetRandomDateTimeOffset()).Create();
 
         private Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
-            actualException => actualException.SameExceptionAs(actualException);
+            actualException => actualException.SameExceptionAs(expectedException);
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
