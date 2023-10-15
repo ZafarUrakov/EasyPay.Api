@@ -3,6 +3,11 @@
 // Manage Your Money Easy
 //===========================
 
+using EasyPay.Api.Brokers.DateTimes;
+using EasyPay.Api.Brokers.Loggings;
+using EasyPay.Api.Brokers.Storages;
+using EasyPay.Api.Services.Foundations.Accounts;
+using EasyPay.Api.Services.Foundations.Clients;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +28,11 @@ namespace EasyPay.Api
         {
 
             services.AddControllers();
+            services.AddTransient<IStorageBroker, StorageBroker>();
+            services.AddTransient<ILoggingBroker, LoggingBroker>();
+            services.AddTransient<IDateTimeBroker, DateTimeBroker>();
+            services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<IClientService, ClientService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EasyPay.Api", Version = "v1" });
