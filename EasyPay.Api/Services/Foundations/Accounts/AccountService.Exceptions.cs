@@ -5,7 +5,6 @@
 
 using System;
 using System.Threading.Tasks;
-using EasyPay.Api.Brokers.Storages;
 using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Accounts.Exceptions;
 using EFxceptions.Models.Exceptions;
@@ -17,20 +16,15 @@ namespace EasyPay.Api.Services.Foundations.Accounts
 {
     public partial class AccountService
     {
-        public AccountService(IStorageBroker storageBroker)
-        {
-            this.storageBroker = storageBroker;
-        }
-
         private delegate ValueTask<Account> ReturningAccountFunction();
 
-        private ValueTask<Account> TryCatch(ReturningAccountFunction returningAccountFunction)
+        private async ValueTask<Account> TryCatch(ReturningAccountFunction returningAccountFunction)
         {
             try
             {
-                return returningAccountFunction();
+                return await returningAccountFunction();
             }
-            catch (AccountNotNull accountNotNull)
+            catch (NullAccountException accountNotNull)
             {
                 throw CreateAndLogValidationException(accountNotNull);
             }
@@ -38,7 +32,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
             {
                 throw CreateAndLogValidationException(invalidAccountException);
             }
-            catch(DuplicateKeyException duplicateKeyException)
+            catch (DuplicateKeyException duplicateKeyException)
             {
                 var alreadyExistsAccountException =
                     new AlreadyExistsAccountException(duplicateKeyException);
@@ -78,7 +72,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         private AccountValidationException CreateAndLogValidationException(Xeption exception)
         {
             var accountValidationException = new AccountValidationException(exception);
-            this.loggingBroker.LogCritical(accountValidationException);
+            this.loggingBroker.LogError(accountValidationException);
 
             return accountValidationException;
         }

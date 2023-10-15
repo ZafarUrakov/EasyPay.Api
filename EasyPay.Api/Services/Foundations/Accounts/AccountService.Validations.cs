@@ -29,7 +29,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         {
             if (account == null)
             {
-                throw new AccountNotNull();
+                throw new NullAccountException();
             }
         }
 

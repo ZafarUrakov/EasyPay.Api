@@ -7,9 +7,9 @@ using Xeptions;
 
 namespace EasyPay.Api.Models.Accounts.Exceptions
 {
-    public class AccountNotNull : Xeption
+    public class NullAccountException : Xeption
     {
-        public AccountNotNull()
+        public NullAccountException()
             : base(message: "Account is null")
         { }
     }
