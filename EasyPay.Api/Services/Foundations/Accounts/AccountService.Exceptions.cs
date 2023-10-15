@@ -60,13 +60,13 @@ namespace EasyPay.Api.Services.Foundations.Accounts
 
                 throw CreateAndLogCriticalDependencyException(failedStorageAccountException);
             }
-            //catch (Exception exception)
-            //{
-            //    var failedAccountServiceException =
-            //        new FailedAccountServiceException(exception);
+            catch (Exception exception)
+            {
+                var failedAccountServiceException =
+                    new FailedAccountServiceException(exception);
 
-            //    throw CreateAndLogAccountServiceException(failedAccountServiceException);
-            //}
+                throw CreateAndLogAccountServiceException(failedAccountServiceException);
+            }
         }
 
         private AccountValidationException CreateAndLogValidationException(Xeption exception)
