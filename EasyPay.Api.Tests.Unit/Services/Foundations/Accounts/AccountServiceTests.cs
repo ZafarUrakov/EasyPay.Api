@@ -4,6 +4,7 @@
 //===========================
 
 using System;
+using System.Linq.Expressions;
 using EasyPay.Api.Brokers.DateTimes;
 using EasyPay.Api.Brokers.Loggings;
 using EasyPay.Api.Brokers.Storages;
@@ -11,6 +12,7 @@ using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Services.Foundations.Accounts;
 using Moq;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
 {
@@ -36,6 +38,9 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
 
         private static Account CreateRandomAccount() =>
             CreateAccountFiller(date: GetRandomDateTimeOffset()).Create();
+
+        private Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+            actualException => actualException.SameExceptionAs(actualException);
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
