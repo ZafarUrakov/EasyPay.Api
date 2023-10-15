@@ -10,6 +10,7 @@ using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -66,7 +67,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
             Account someAccount = CreateRandomAccount();
             var duplicateKeyException = new DuplicateKeyException(someMessage);
 
-            var alreadyExistsAccountException = 
+            var alreadyExistsAccountException =
                 new AlreadyExistsAccountException(duplicateKeyException);
 
             var expectedAccountDependencyValidationException =
@@ -92,6 +93,45 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedAccountDependencyValidationException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            Account someAccount = CreateRandomAccount();
+
+            var serviceException = new Exception();
+
+            var failedAccountServiceException =
+                new FailedAccountServiceException(serviceException);
+
+            var expectedAccountServiceException =
+                new AccountServiceException(failedAccountServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.InsertAccountAsync(someAccount)).ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<Account> addAccountTask =
+                this.accountService.AddAccountAsync(someAccount);
+
+            AccountServiceException actualAccountServiceException = await Assert
+                .ThrowsAsync<AccountServiceException>(addAccountTask.AsTask);
+            // then
+            actualAccountServiceException.Should()
+                .BeEquivalentTo(expectedAccountServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertAccountAsync(someAccount), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedAccountServiceException))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
