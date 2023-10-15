@@ -3,6 +3,7 @@
 // Manage Your Money Easy
 //===========================
 
+using System;
 using System.Threading.Tasks;
 using EasyPay.Api.Brokers.DateTimes;
 using EasyPay.Api.Brokers.Loggings;
@@ -32,7 +33,9 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         {
             ValidateAccountOnAdd(account);
 
-            return await this.storageBroker.InsertAccountAsync(account);
+            throw new NotImplementedException();
+
+            //return await this.storageBroker.InsertAccountAsync(account);
         });
     }
 }
