@@ -9,6 +9,7 @@ using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -60,7 +61,8 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             string someMessage = GetRandomString();
             Client someClient = CreateRandomClient();
 
-            DuplicateKeyException duplicateKeyException = new DuplicateKeyException(someMessage);
+            DuplicateKeyException duplicateKeyException = 
+                new DuplicateKeyException(someMessage);
 
             var alreadyExistsClientException = 
                 new AlreadyExistsClientException(duplicateKeyException);
@@ -74,8 +76,8 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             ValueTask<Client> addClientTask =
                 this.clientService.AddClientAsync(someClient);
 
-            var actualClientDependencyValidationException =
-                 await Assert.ThrowsAsync<ClientDependencyValidationException>(addClientTask.AsTask);
+            var actualClientDependencyValidationException = await Assert
+                .ThrowsAsync<ClientDependencyValidationException>(addClientTask.AsTask);
 
             // then
             actualClientDependencyValidationException.Should()
@@ -87,6 +89,46 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedClientDependencyValidationException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            Client someClient = CreateRandomClient();
+
+            var serviceException = new Exception();
+
+            var clientServiceException =
+                new FailedClientServiceException(serviceException);
+
+            var expectedclientServiceException = 
+                new ClientServiceException(clientServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.InsertClientAsync(someClient))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<Client> addClientTask =
+                this.clientService.AddClientAsync(someClient);
+
+            var actualClientService =
+                await Assert.ThrowsAsync<ClientServiceException>(addClientTask.AsTask);
+
+            // then
+            actualClientService.Should().BeEquivalentTo(expectedclientServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertClientAsync(someClient), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedclientServiceException))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
