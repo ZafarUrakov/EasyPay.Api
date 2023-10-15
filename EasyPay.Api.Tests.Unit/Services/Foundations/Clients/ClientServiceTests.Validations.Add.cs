@@ -35,9 +35,8 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             actualClientException.Should().BeEquivalentTo(expectedClientValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
-            broker.LogError(It.Is
-            (SameExceptionAs(expectedClientValidationException))),
-                Times.Once);
+            broker.LogError(It.Is(SameExceptionAs(
+                expectedClientValidationException))),Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertClientAsync(It.IsAny<Client>()), Times.Never);
