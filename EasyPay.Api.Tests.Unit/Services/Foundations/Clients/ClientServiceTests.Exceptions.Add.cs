@@ -24,10 +24,10 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             Client someClient = CreateRandomClient();
 
             SqlException sqlException = GetSqlError();
-            var failedClientStorageException = 
+            var failedClientStorageException =
                 new FailedClientStorageException(sqlException);
 
-            var expectedClientDependencyException = 
+            var expectedClientDependencyException =
                 new ClientDependencyException(failedClientStorageException);
 
             this.storageBrokerMock.Setup(broker =>
@@ -61,13 +61,13 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             string someMessage = GetRandomString();
             Client someClient = CreateRandomClient();
 
-            DuplicateKeyException duplicateKeyException = 
+            DuplicateKeyException duplicateKeyException =
                 new DuplicateKeyException(someMessage);
 
-            var alreadyExistsClientException = 
+            var alreadyExistsClientException =
                 new AlreadyExistsClientException(duplicateKeyException);
 
-            var expectedClientDependencyValidationException = 
+            var expectedClientDependencyValidationException =
                 new ClientDependencyValidationException(alreadyExistsClientException);
 
             this.storageBrokerMock.Setup(broker =>
@@ -106,7 +106,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             var clientServiceException =
                 new FailedClientServiceException(serviceException);
 
-            var expectedclientServiceException = 
+            var expectedclientServiceException =
                 new ClientServiceException(clientServiceException);
 
             this.storageBrokerMock.Setup(broker =>

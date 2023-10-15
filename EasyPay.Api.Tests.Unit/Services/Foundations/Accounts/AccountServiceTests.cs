@@ -3,14 +3,14 @@
 // Manage Your Money Easy
 //===========================
 
-using System;
-using System.Linq.Expressions;
 using EasyPay.Api.Brokers.DateTimes;
 using EasyPay.Api.Brokers.Loggings;
 using EasyPay.Api.Brokers.Storages;
 using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Services.Foundations.Accounts;
 using Moq;
+using System;
+using System.Linq.Expressions;
 using Tynamix.ObjectFiller;
 using Xeptions;
 
@@ -29,7 +29,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
-            this.accountService = 
+            this.accountService =
                 new AccountService(
                     storageBroker: this.storageBrokerMock.Object,
                     dateTimeBroker: this.dateTimeBrokerMock.Object,
