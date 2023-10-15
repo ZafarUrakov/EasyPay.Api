@@ -33,9 +33,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         {
             ValidateAccountOnAdd(account);
 
-            throw new NotImplementedException();
-
-            //return await this.storageBroker.InsertAccountAsync(account);
+            return await this.storageBroker.InsertAccountAsync(account);
         });
     }
 }
