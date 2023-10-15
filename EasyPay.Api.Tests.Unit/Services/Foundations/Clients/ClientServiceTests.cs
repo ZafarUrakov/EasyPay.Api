@@ -8,9 +8,11 @@ using EasyPay.Api.Brokers.Loggings;
 using EasyPay.Api.Brokers.Storages;
 using EasyPay.Api.Models.Clients;
 using EasyPay.Api.Services.Foundations.Clients;
+using Microsoft.Data.SqlClient;
 using Moq;
 using System;
 using System.Linq.Expressions;
+using System.Runtime.Serialization;
 using Tynamix.ObjectFiller;
 using Xeptions;
 
@@ -35,8 +37,11 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
                     loggingBroker: this.loggingBrokerMock.Object);
         }
 
+        private string GetRandomString() =>
+            new MnemonicString().GetValue();
+
         private Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
-            actualException => actualException.SameExceptionAs(actualException);
+            actualException => actualException.SameExceptionAs(expectedException);
 
         private static Client CreateRandomClient() =>
             CreateClientFiller(GetRandomDateTime()).Create();
@@ -53,5 +58,8 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
 
             return filler;
         }
+
+        private static SqlException GetSqlError() =>
+            (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
     }
 }
