@@ -30,9 +30,10 @@ namespace EasyPay.Api.Services.Foundations.Accounts
             }
             catch (InvalidAccountException invalidAccountException)
             {
-                throw CreateAndLogValidationException(invalidAccountException);
+                //throw CreateAndLogValidationException(invalidAccountException);
+                throw invalidAccountException;
             }
-            catch(DuplicateKeyException duplicateKeyException)
+            catch (DuplicateKeyException duplicateKeyException)
             {
                 var alreadyExistsAccountException =
                     new AlreadyExistsAccountException(duplicateKeyException);
