@@ -37,6 +37,9 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
                     loggingBroker: this.loggingBrokerMock.Object);
         }
 
+        private string GetRandomString() =>
+            new MnemonicString().GetValue();
+
         private Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
 
