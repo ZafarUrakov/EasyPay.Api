@@ -83,13 +83,13 @@ namespace EasyPay.Api.Services.Foundations.Clients
 
                 throw CreateAndLogCriticalDependencyException(failedClientStorageException);
             }
-            //catch (Exception exception)
-            //{
-            //    var failedClientServiceException =
-            //        new FailedClientServiceException(exception);
+            catch (Exception exception)
+            {
+                var failedClientServiceException =
+                    new FailedClientServiceException(exception);
 
-            //    throw CreateAndLogServiceException(failedClientServiceException);
-            //}
+                throw CreateAndLogServiceException(failedClientServiceException);
+            }
         }
 
         private ClientServiceException CreateAndLogServiceException(Xeption innerException)
