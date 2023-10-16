@@ -7,6 +7,8 @@ using EasyPay.Api.Brokers.DateTimes;
 using EasyPay.Api.Brokers.Loggings;
 using EasyPay.Api.Brokers.Storages;
 using EasyPay.Api.Models.Clients;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EasyPay.Api.Services.Foundations.Clients
@@ -34,5 +36,8 @@ namespace EasyPay.Api.Services.Foundations.Clients
 
             return await this.storageBroker.InsertClientAsync(client);
         });
+
+        public IQueryable<Client> RetrieveAllClients() =>
+            TryCatch(() => this.storageBroker.SelectAllClients());
     }
 }
