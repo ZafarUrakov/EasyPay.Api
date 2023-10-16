@@ -51,5 +51,44 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            string exceptionMessage = GetRandomString();
+            var serverException = new Exception(exceptionMessage);
+
+            var failedClientServiceException = 
+                new FailedClientServiceException(serverException);
+
+            var expectedClientServiceException = 
+                new ClientServiceException(failedClientServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectAllClients()).Throws(serverException);
+
+            // when 
+            Action retrieveAllclientActions = () =>
+                this.clientService.RetrieveAllClients();
+
+            ClientServiceException actualClientServiceException = 
+                Assert.Throws<ClientServiceException>(retrieveAllclientActions);
+
+            // when
+            actualClientServiceException.Should()
+                .BeEquivalentTo(expectedClientServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAllClients(), Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedClientServiceException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
