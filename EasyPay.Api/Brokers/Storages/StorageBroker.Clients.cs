@@ -18,8 +18,8 @@ namespace EasyPay.Api.Brokers.Storages
         public async ValueTask<Client> InsertClientAsync(Client client) =>
             await InsertAsync(client);
 
-        public IQueryable<Client> SelectAllClients(Client client) =>
-            SelectAll(client);
+        public IQueryable<Client> SelectAllClients() =>
+            SelectAll<Client>();
 
         public async ValueTask<Client> SelectClientByIdAsync(Guid clientId) =>
             await SelectAsync<Client>(clientId);

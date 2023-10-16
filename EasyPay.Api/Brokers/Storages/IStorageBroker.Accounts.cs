@@ -13,7 +13,7 @@ namespace EasyPay.Api.Brokers.Storages
     public partial interface IStorageBroker
     {
         ValueTask<Account> InsertAccountAsync(Account account);
-        IQueryable<Account> SelectAllAccounts(Account account);
+        IQueryable<Account> SelectAllAccounts();
         ValueTask<Account> SelectAccountByIdAsync(Guid accountId);
         ValueTask<Account> UpdateAccountAsync(Account account);
         ValueTask<Account> DeleteAccountAsync(Account account);

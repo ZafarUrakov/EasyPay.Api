@@ -30,7 +30,7 @@ namespace EasyPay.Api.Brokers.Storages
             return @object;
         }
 
-        public IQueryable<T> SelectAll<T>(T @object) where T : class
+        public IQueryable<T> SelectAll<T>() where T : class
         {
             var broker = new StorageBroker(configuration);
 

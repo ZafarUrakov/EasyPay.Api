@@ -7,6 +7,8 @@ using EasyPay.Api.Brokers.DateTimes;
 using EasyPay.Api.Brokers.Loggings;
 using EasyPay.Api.Brokers.Storages;
 using EasyPay.Api.Models.Accounts;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EasyPay.Api.Services.Foundations.Accounts
@@ -34,5 +36,11 @@ namespace EasyPay.Api.Services.Foundations.Accounts
 
             return await this.storageBroker.InsertAccountAsync(account);
         });
+
+        public IQueryable<Account> RetrieveAllAccounts()
+        {
+            throw new NotImplementedException();
+            //return this.storageBroker.SelectAllAccounts();
+        }
     }
 }

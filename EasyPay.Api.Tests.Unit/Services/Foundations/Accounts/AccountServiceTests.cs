@@ -11,6 +11,7 @@ using EasyPay.Api.Services.Foundations.Accounts;
 using Microsoft.Data.SqlClient;
 using Moq;
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Tynamix.ObjectFiller;
@@ -43,6 +44,15 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
 
         private static Account CreateRandomAccount() =>
             CreateAccountFiller(date: GetRandomDateTimeOffset()).Create();
+
+        private static IQueryable<Account> GetRandomAccounts()
+        {
+            return CreateAccountFiller(date: GetRandomDateTimeOffset())
+                .Create(count: GetRandomNUmber()).AsQueryable();
+        }
+
+        private static int GetRandomNUmber() =>
+            new IntRange(min: 2, max: 9).GetValue();
 
         private Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
