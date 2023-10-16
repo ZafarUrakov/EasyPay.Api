@@ -39,8 +39,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
 
         public IQueryable<Account> RetrieveAllAccounts()
         {
-            throw new NotImplementedException();
-            //return this.storageBroker.SelectAllAccounts();
+            return this.storageBroker.SelectAllAccounts();
         }
     }
 }
