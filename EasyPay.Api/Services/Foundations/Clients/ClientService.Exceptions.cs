@@ -76,13 +76,13 @@ namespace EasyPay.Api.Services.Foundations.Clients
             {
                 return returningClientsFunction();
             }
-            catch (SqlException sqlException)
-            {
-                var failedClientStorageException =
-                    new FailedClientStorageException(sqlException);
+            //catch (SqlException sqlException)
+            //{
+            //    var failedClientStorageException =
+            //        new FailedClientStorageException(sqlException);
 
-                throw CreateAndLogCriticalDependencyException(failedClientStorageException);
-            }
+            //    throw CreateAndLogCriticalDependencyException(failedClientStorageException);
+            //}
             catch (Exception exception)
             {
                 var failedClientServiceException =
