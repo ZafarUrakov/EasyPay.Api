@@ -37,10 +37,7 @@ namespace EasyPay.Api.Services.Foundations.Clients
             return await this.storageBroker.InsertClientAsync(client);
         });
 
-        public IQueryable<Client> RetrieveAllClients()
-        {
-            throw new NotImplementedException();
-        }
-            //TryCatch(() => this.storageBroker.SelectAllClients());
+        public IQueryable<Client> RetrieveAllClients() =>
+            TryCatch(() => this.storageBroker.SelectAllClients());
     }
 }

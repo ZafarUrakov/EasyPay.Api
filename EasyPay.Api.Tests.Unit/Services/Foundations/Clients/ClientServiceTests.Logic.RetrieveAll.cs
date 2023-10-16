@@ -28,6 +28,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             // when
             IQueryable<Client> actualClients =
                 this.clientService.RetrieveAllClients();
+
             // then
             actualClients.Should().BeEquivalentTo(expectedClients);
 
