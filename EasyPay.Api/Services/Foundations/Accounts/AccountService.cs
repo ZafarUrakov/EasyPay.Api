@@ -37,9 +37,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
             return await this.storageBroker.InsertAccountAsync(account);
         });
 
-        public IQueryable<Account> RetrieveAllAccounts()
-        {
-            return this.storageBroker.SelectAllAccounts();
-        }
+        public IQueryable<Account> RetrieveAllAccounts() =>
+             TryCatch(() => this.storageBroker.SelectAllAccounts());
     }
 }
