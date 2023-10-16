@@ -47,5 +47,40 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfAccountIsNotFoundAndLogItAsync()
+        {
+            //given
+            Guid someId = Guid.NewGuid();
+            Account noAccount = null;
+
+            var notFoundAccountException = new NotFoundAccountException(someId);
+
+            var expectedAccountValidationException =
+                new AccountValidationException(notFoundAccountException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectAccountByIdAsync(It.IsAny<Guid>())).ReturnsAsync(noAccount);
+
+            //when
+            ValueTask<Account> retrieveAccountByIdTask =
+                this.accountService.RetrieveAccountByIdAsync(someId);
+
+            AccountValidationException accountValidationException =
+                await Assert.ThrowsAsync<AccountValidationException>(retrieveAccountByIdTask.AsTask);
+
+            //then
+            accountValidationException.Should().BeEquivalentTo(expectedAccountValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAccountByIdAsync(It.IsAny<Guid>()), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(expectedAccountValidationException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
