@@ -23,10 +23,6 @@ namespace EasyPay.Api.Services.Foundations.Clients
                 (Rule: IsInvalid(client.Email), Parameter: nameof(Client.Email)),
                 (Rule: IsInvalid(client.PhoneNumber), Parameter: nameof(Client.PhoneNumber)),
                 (Rule: IsInvalid(client.Address), Parameter: nameof(Client.Address)));
-
-            Validate(
-                (Rule: IsLessThen14(client.BirthDate), Parameter: nameof(Client.BirthDate)),
-                (Rule: IsNotRecent(client.BirthDate), Parameter: nameof(Client.BirthDate)));
         }
 
         private static dynamic IsInvalid(Guid clientId) => new
@@ -46,36 +42,6 @@ namespace EasyPay.Api.Services.Foundations.Clients
             Condition = date == default,
             Message = "Date is required"
         };
-
-        private dynamic IsLessThen14(DateTimeOffset date) => new
-        {
-            Condition = IsAgeLessThen14(date),
-            Message = "Age is less than 14"
-        };
-
-        private bool IsAgeLessThen14(DateTimeOffset date)
-        {
-            DateTimeOffset now = this.dateTimeBroker
-                .GetCurrentDateTimeOffset();
-            int age = (now - date).Days / 365;
-
-            return age < 14;
-        }
-
-        private dynamic IsNotRecent(DateTimeOffset date) => new
-        {
-            Condition = IsDateNotRecent(date),
-            Message = "Date is not recent"
-        };
-
-        private bool IsDateNotRecent(DateTimeOffset date)
-        {
-            DateTimeOffset currentDateTime = this
-                .dateTimeBroker.GetCurrentDateTimeOffset();
-            TimeSpan timeDifference = currentDateTime.Subtract(date);
-
-            return timeDifference.TotalSeconds is > 70 or < 0;
-        }
 
         private static void ValidateClientNotNull(Client client)
         {
