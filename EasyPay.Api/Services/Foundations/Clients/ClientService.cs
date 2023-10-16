@@ -39,5 +39,10 @@ namespace EasyPay.Api.Services.Foundations.Clients
 
         public IQueryable<Client> RetrieveAllClients() =>
             TryCatch(() => this.storageBroker.SelectAllClients());
+
+        public ValueTask<Client> RetrieveClientByIdAsync(Guid clientId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
