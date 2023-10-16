@@ -68,10 +68,11 @@ namespace EasyPay.Api.Services.Foundations.Accounts
             }
             catch (Exception exception)
             {
-                var failedAccountServiceException =
-                    new FailedAccountServiceException(exception);
+                throw exception;
+                //var failedAccountServiceException =
+                //    new FailedAccountServiceException(exception);
 
-                throw CreateAndLogAccountServiceException(failedAccountServiceException);
+                //throw CreateAndLogAccountServiceException(failedAccountServiceException);
             }
         }
 
