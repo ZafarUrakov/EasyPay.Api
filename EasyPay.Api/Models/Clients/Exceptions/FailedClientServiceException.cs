@@ -11,7 +11,7 @@ namespace EasyPay.Api.Models.Clients.Exceptions
     public class FailedClientServiceException : Xeption
     {
         public FailedClientServiceException(Exception innerException)
-            : base(message: "Failed job service error occurred, please contact support.", innerException)
+            : base(message: "Failed client service error occurred, please contact support.", innerException)
         { }
     }
 }
