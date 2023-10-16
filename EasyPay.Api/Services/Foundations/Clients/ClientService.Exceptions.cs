@@ -9,6 +9,7 @@ using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Xeptions;
 
@@ -17,6 +18,7 @@ namespace EasyPay.Api.Services.Foundations.Clients
     public partial class ClientService
     {
         private delegate ValueTask<Client> ReturningClientFunction();
+        private delegate IQueryable<Client> ReturningClientsFunction();
 
         private async ValueTask<Client> TryCatch(ReturningClientFunction returningClientFunction)
         {
@@ -63,6 +65,28 @@ namespace EasyPay.Api.Services.Foundations.Clients
             catch (Exception exception)
             {
                 var failedClientServiceException = new FailedClientServiceException(exception);
+
+                throw CreateAndLogServiceException(failedClientServiceException);
+            }
+        }
+
+        private IQueryable<Client> TryCatch(ReturningClientsFunction returningClientsFunction)
+        {
+            try
+            {
+                return returningClientsFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedClientStorageException =
+                    new FailedClientStorageException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedClientStorageException);
+            }
+            catch (Exception exception)
+            {
+                var failedClientServiceException =
+                    new FailedClientServiceException(exception);
 
                 throw CreateAndLogServiceException(failedClientServiceException);
             }

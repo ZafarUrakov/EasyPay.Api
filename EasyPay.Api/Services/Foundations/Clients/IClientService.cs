@@ -4,6 +4,7 @@
 //===========================
 
 using EasyPay.Api.Models.Clients;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EasyPay.Api.Services.Foundations.Clients
@@ -15,5 +16,6 @@ namespace EasyPay.Api.Services.Foundations.Clients
         /// <exception cref="Models.Clients.Exceptions.ClientDependencyException"></exception>
         /// <exception cref="Models.Clients.Exceptions.ClientServiceException"></exception>
         ValueTask<Client> AddClientAsync(Client client);
+        IQueryable<Client> RetrieveAllClients();
     }
 }

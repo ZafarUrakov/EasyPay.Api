@@ -11,6 +11,7 @@ using EasyPay.Api.Services.Foundations.Clients;
 using Microsoft.Data.SqlClient;
 using Moq;
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Tynamix.ObjectFiller;
@@ -40,13 +41,22 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
         private string GetRandomString() =>
             new MnemonicString().GetValue();
 
+        private IQueryable<Client> CreateRandomClients()
+        {
+            return CreateClientFiller(GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber()).AsQueryable();
+        }
+
+        private static int GetRandomNumber() =>
+            new IntRange(min: 2, max: 9).GetValue();
+
         private Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
 
         private static Client CreateRandomClient() =>
-            CreateClientFiller(GetRandomDateTime()).Create();
+            CreateClientFiller(GetRandomDateTimeOffset()).Create();
 
-        private static DateTimeOffset GetRandomDateTime() =>
+        private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: DateTime.UnixEpoch).GetValue();
 
         private static Filler<Client> CreateClientFiller(DateTimeOffset dates)
