@@ -9,6 +9,7 @@ using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Xeptions;
 
@@ -17,6 +18,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
     public partial class AccountService
     {
         private delegate ValueTask<Account> ReturningAccountFunction();
+        private delegate IQueryable<Account> ReturningAccountsFunction();
 
         private async ValueTask<Account> TryCatch(ReturningAccountFunction returningAccountFunction)
         {
@@ -64,6 +66,26 @@ namespace EasyPay.Api.Services.Foundations.Accounts
             {
                 var failedAccountServiceException =
                     new FailedAccountServiceException(exception);
+
+                throw CreateAndLogAccountServiceException(failedAccountServiceException);
+            }
+        }
+
+        private IQueryable<Account> TryCatch(ReturningAccountsFunction returningAccountsFunction)
+        {
+            try
+            {
+                return returningAccountsFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedStorageAccountException = new FailedStorageAccountException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedStorageAccountException);
+            }
+            catch(Exception exception)
+            {
+                var failedAccountServiceException = new FailedAccountServiceException(exception);
 
                 throw CreateAndLogAccountServiceException(failedAccountServiceException);
             }
