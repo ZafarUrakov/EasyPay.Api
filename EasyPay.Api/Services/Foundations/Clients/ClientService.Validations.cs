@@ -24,9 +24,9 @@ namespace EasyPay.Api.Services.Foundations.Clients
                 (Rule: IsInvalid(client.PhoneNumber), Parameter: nameof(Client.PhoneNumber)),
                 (Rule: IsInvalid(client.Address), Parameter: nameof(Client.Address)));
 
-            //Validate(
-            //    (Rule: IsLessThen14(client.BirthDate), Parameter: nameof(Client.BirthDate)),
-            //    (Rule: IsNotRecent(client.BirthDate), Parameter: nameof(Client.BirthDate)));
+            Validate(
+                (Rule: IsLessThen14(client.BirthDate), Parameter: nameof(Client.BirthDate)),
+                (Rule: IsNotRecent(client.BirthDate), Parameter: nameof(Client.BirthDate)));
         }
 
         private static dynamic IsInvalid(Guid clientId) => new
