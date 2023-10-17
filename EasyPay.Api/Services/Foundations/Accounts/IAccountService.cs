@@ -4,6 +4,7 @@
 //===========================
 
 using EasyPay.Api.Models.Accounts;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,5 +14,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
     {
         ValueTask<Account> AddAccountAsync(Account account);
         IQueryable<Account> RetrieveAllAccounts();
+
+        ValueTask<Account> RetrieveAccountByIdAsync(Guid accountId);
     }
 }

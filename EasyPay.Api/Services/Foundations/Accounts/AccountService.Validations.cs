@@ -6,6 +6,7 @@
 using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Accounts.Exceptions;
 using System;
+using System.Data;
 
 namespace EasyPay.Api.Services.Foundations.Accounts
 {
@@ -64,6 +65,17 @@ namespace EasyPay.Api.Services.Foundations.Accounts
             }
 
             invalidAccountException.ThrowIfContainsErrors();
+        }
+
+        private void ValidateAccountId(Guid accountId) =>
+            Validate((Rule: IsInvalid(accountId), Parameter: nameof(Account.AccountId)));
+
+        private void ValidateStorageAccount(Account maybeAccount, Guid accountId)
+        {
+            if(maybeAccount is null)
+            {
+                throw new NotFoundAccountException(accountId);
+            }
         }
     }
 }
