@@ -104,5 +104,47 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRemoveIfExceptionOccursAndLogItAsync()
+        {
+            // given
+            Guid someClientId = Guid.NewGuid();
+            var serviceException = new Exception();
+
+            var failedClientServiceException =
+                new FailedClientServiceException(serviceException);
+
+            var expectedClientServiceException =
+                new ClientServiceException(failedClientServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectClientByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<Client> removeClientByIdTask =
+                this.clientService.RemoveClientByIdAsync(someClientId);
+
+            ClientServiceException actualClientServiceException =
+                await Assert.ThrowsAsync<ClientServiceException>(
+                    removeClientByIdTask.AsTask);
+
+            // then
+            actualClientServiceException.Should().BeEquivalentTo(
+                expectedClientServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectClientByIdAsync(It.IsAny<Guid>()),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedClientServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
