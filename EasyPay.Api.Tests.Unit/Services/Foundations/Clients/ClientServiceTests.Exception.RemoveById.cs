@@ -6,6 +6,7 @@
 using EasyPay.Api.Models.Clients;
 using EasyPay.Api.Models.Clients.Exceptions;
 using FluentAssertions;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using System;
@@ -37,7 +38,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
 
             // when
             ValueTask<Client> removeClientById =
-                this.clientService.RemoveClientById(someClientId);
+                this.clientService.RemoveClientByIdAsync(someClientId);
 
             var actualClientDependencyValidationException =
                 await Assert.ThrowsAsync<ClientDependencyValidationException>(
@@ -56,6 +57,48 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
 
             this.storageBrokerMock.Verify(broker =>
                 broker.DeleteClientAsync(It.IsAny<Client>()), Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnRemoveWhenSqlExceptionOccursAndLogItAsync()
+        {
+            // given
+            Guid someLocationId = Guid.NewGuid();
+            SqlException sqlException = GetSqlError();
+
+            var failedClientStorageException =
+                new FailedClientStorageException(sqlException);
+
+            var expectedClientDependencyException =
+                new ClientDependencyException(failedClientStorageException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectClientByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(sqlException);
+            // when
+            ValueTask<Client> deleteClientTask =
+                this.clientService.RemoveClientByIdAsync(someLocationId);
+
+            ClientDependencyException actualClientDependencyException =
+                await Assert.ThrowsAsync<ClientDependencyException>(
+                    deleteClientTask.AsTask);
+
+            // then
+            actualClientDependencyException.Should().BeEquivalentTo(
+                expectedClientDependencyException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectClientByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogCritical(It.Is(SameExceptionAs(
+                    expectedClientDependencyException))),
+                        Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

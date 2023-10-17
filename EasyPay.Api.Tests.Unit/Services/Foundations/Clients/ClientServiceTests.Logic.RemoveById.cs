@@ -37,7 +37,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
 
             // when
             Client actualClient = await this
-                .clientService.RemoveClientById(randomId);
+                .clientService.RemoveClientByIdAsync(randomId);
 
             // then 
             actualClient.Should().BeEquivalentTo(expectedClient);

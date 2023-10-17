@@ -19,6 +19,6 @@ namespace EasyPay.Api.Services.Foundations.Clients
         ValueTask<Client> AddClientAsync(Client client);
         IQueryable<Client> RetrieveAllClients();
         ValueTask<Client> RetrieveClientByIdAsync(Guid clientId);
-        ValueTask<Client> RemoveClientById(Guid locationId);
+        ValueTask<Client> RemoveClientByIdAsync(Guid locationId);
     }
 }

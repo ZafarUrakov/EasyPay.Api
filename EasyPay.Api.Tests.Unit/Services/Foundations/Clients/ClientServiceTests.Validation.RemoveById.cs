@@ -33,7 +33,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
 
             // when
             ValueTask<Client> removeClientById =
-                this.clientService.RemoveClientById(invalidClientId);
+                this.clientService.RemoveClientByIdAsync(invalidClientId);
 
             ClientValidationException actualClientValidationException =
                 await Assert.ThrowsAsync<ClientValidationException>(
@@ -76,7 +76,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
 
             // when
             ValueTask<Client> removeClientById =
-                this.clientService.RemoveClientById(inputClientId);
+                this.clientService.RemoveClientByIdAsync(inputClientId);
 
             var actualClientValidationException =
                 await Assert.ThrowsAsync<ClientValidationException>(

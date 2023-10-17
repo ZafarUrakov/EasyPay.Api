@@ -52,7 +52,7 @@ namespace EasyPay.Api.Services.Foundations.Clients
             return maybeclient;
         });
 
-        public ValueTask<Client> RemoveClientById(Guid clientId) =>
+        public ValueTask<Client> RemoveClientByIdAsync(Guid clientId) =>
         TryCatch(async () =>
         {
             ValidateClientId(clientId);
