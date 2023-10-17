@@ -34,10 +34,10 @@ namespace EasyPay.Api.Services.Foundations.Clients
             {
                 throw CreateAndLogValidationException(invalidClientException);
             }
-            catch (NotFoundClientException notFoundClientException)
-            {
-                throw CreateAndLogValidationException(notFoundClientException);
-            }
+            //catch (NotFoundClientException notFoundClientException)
+            //{
+            //    throw CreateAndLogValidationException(notFoundClientException);
+            //}
             catch (SqlException sqlException)
             {
                 var failedClientStrageException = new FailedClientStorageException(sqlException);
