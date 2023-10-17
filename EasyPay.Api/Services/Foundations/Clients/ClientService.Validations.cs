@@ -6,6 +6,7 @@
 using EasyPay.Api.Models.Clients;
 using EasyPay.Api.Models.Clients.Exceptions;
 using System;
+using System.Reflection.Metadata;
 
 namespace EasyPay.Api.Services.Foundations.Clients
 {
@@ -48,6 +49,17 @@ namespace EasyPay.Api.Services.Foundations.Clients
             if (client == null)
             {
                 throw new NullClientException();
+            }
+        }
+
+        private static void ValidateClientId(Guid clientId) =>
+            Validate((Rule: IsInvalid(clientId), Parameter: nameof(Client.ClientId)));
+
+        private static void ValidateStorageClient(Client maybeClient, Guid clientId)
+        {
+            if(maybeClient is null)
+            {
+                throw new NotFoundClientException(clientId);
             }
         }
 

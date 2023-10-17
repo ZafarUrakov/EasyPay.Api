@@ -40,7 +40,16 @@ namespace EasyPay.Api.Services.Foundations.Clients
         public IQueryable<Client> RetrieveAllClients() =>
             TryCatch(() => this.storageBroker.SelectAllClients());
 
-        public async ValueTask<Client> RetrieveClientByIdAsync(Guid clientId) =>
-            await this.storageBroker.SelectClientByIdAsync(clientId);
+        public ValueTask<Client> RetrieveClientByIdAsync(Guid clientId) =>
+        TryCatch(async () =>
+        {
+            ValidateClientId(clientId);
+
+            Client maybeclient =  await this.storageBroker.SelectClientByIdAsync(clientId);
+
+            ValidateStorageClient(maybeclient, clientId);
+
+            return maybeclient;
+        });
     }
 }
