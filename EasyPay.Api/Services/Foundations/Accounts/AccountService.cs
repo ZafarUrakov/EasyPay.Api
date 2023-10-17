@@ -37,6 +37,11 @@ namespace EasyPay.Api.Services.Foundations.Accounts
             return await this.storageBroker.InsertAccountAsync(account);
         });
 
+        public ValueTask<Account> RemoveAccountByIdAsync(Guid accountId)
+        {
+            throw new NotImplementedException();
+        }
+
         public ValueTask<Account> RetrieveAccountByIdAsync(Guid accountId) =>
         TryCatch( async() =>
         {
