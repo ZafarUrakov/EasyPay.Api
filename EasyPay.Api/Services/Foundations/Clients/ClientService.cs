@@ -51,5 +51,10 @@ namespace EasyPay.Api.Services.Foundations.Clients
 
             return maybeclient;
         });
+
+        public ValueTask<Client> RemoveLocationById(Guid locationId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
