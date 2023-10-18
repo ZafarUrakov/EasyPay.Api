@@ -21,7 +21,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             Client nullClient = null;
             var nullClientException = new NullClientException();
 
-            var expectedClientValidationException = 
+            var expectedClientValidationException =
                 new ClientValidationException(nullClientException);
 
             // when
@@ -33,7 +33,8 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
                     modifyClientTask.AsTask);
 
             // then
-            actualClientValidationException.Should().BeEquivalentTo(expectedClientValidationException);
+            actualClientValidationException.Should()
+                .BeEquivalentTo(expectedClientValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
@@ -44,6 +45,76 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task ShouldThrowValidationExceptionOnModifyIfClientIsInvalidAndLogItAsync(string invalidString)
+        {
+            //given
+            Client invalidClient = new Client
+            {
+                FirstName = invalidString
+            };
+
+            var invalidClientException =
+                new InvalidClientException();
+
+            invalidClientException.AddData(
+                key: nameof(Client.ClientId),
+                values: "Id is required");
+
+            invalidClientException.AddData(
+                key: nameof(Client.FirstName),
+                values: "Text is required");
+
+            invalidClientException.AddData(
+                key: nameof(Client.LastName),
+                values: "Text is required");
+
+            invalidClientException.AddData(
+                key: nameof(Client.BirthDate),
+                values: "Date is required");
+
+            invalidClientException.AddData(
+                key: nameof(Client.PhoneNumber),
+                values: "Text is required");
+
+            invalidClientException.AddData(
+                key: nameof(Client.Email),
+                values: "Text is required");
+
+            invalidClientException.AddData(
+                key: nameof(Client.Address),
+                values: "Text is required");
+
+            var expectedClientValidationException =
+                new ClientValidationException(invalidClientException);
+
+            // when
+            ValueTask<Client> modifyClientTask =
+                this.clientService.ModifyClientAsync(invalidClient);
+
+            ClientValidationException actualClientValidationException =
+                await Assert.ThrowsAsync<ClientValidationException>(
+                    modifyClientTask.AsTask);
+
+            // then
+            actualClientValidationException.Should()
+                .BeEquivalentTo(expectedClientValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedClientValidationException))), Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateClientAsync(It.IsAny<Client>()), Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
     }
