@@ -7,7 +7,9 @@ using EasyPay.Api.Brokers.DateTimes;
 using EasyPay.Api.Brokers.Loggings;
 using EasyPay.Api.Brokers.Storages;
 using EasyPay.Api.Models.Accounts;
+using EasyPay.Api.Models.Accounts.Exceptions;
 using System;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -39,9 +41,24 @@ namespace EasyPay.Api.Services.Foundations.Accounts
 
         public async ValueTask<Account> RemoveAccountByIdAsync(Guid accountId)
         {
-            Account maybeAccount = await this.storageBroker.SelectAccountByIdAsync(accountId);
+            try
+            {
+                Validate((Rule: IsInvalid(accountId), Parameter: nameof(Account.AccountId)));
 
-            return await this.storageBroker.DeleteAccountAsync(maybeAccount);
+                Account maybeAccount = await this.storageBroker.SelectAccountByIdAsync(accountId);
+
+
+                return await this.storageBroker.DeleteAccountAsync(maybeAccount);
+            }
+            catch (InvalidAccountException invalidAccountException)
+            {
+                var accountValidationException =
+                    new AccountValidationException(invalidAccountException);
+
+                this.loggingBroker.LogError(accountValidationException);
+                throw accountValidationException;
+            }
+            
         }
 
         public ValueTask<Account> RetrieveAccountByIdAsync(Guid accountId) =>
