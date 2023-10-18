@@ -47,11 +47,10 @@ namespace EasyPay.Api.Services.Foundations.Accounts
             }
             catch (SqlException sqlException)
             {
-                //var failedStorageAccountException =
-                //    new FailedStorageAccountException(sqlException);
+                var failedStorageAccountException =
+                    new FailedStorageAccountException(sqlException);
 
-                //throw CreateAndLogCriticalDependencyException(failedStorageAccountException);
-                throw sqlException;
+                throw CreateAndLogCriticalDependencyException(failedStorageAccountException);
             }
             catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
             {
