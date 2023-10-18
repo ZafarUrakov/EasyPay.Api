@@ -32,7 +32,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
                     .ReturnsAsync(persistedAccount);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.DeleteAccountAsync(expectedAccount))
+                broker.DeleteAccountAsync(expectedInputAccount))
                     .ReturnsAsync(deleteAccount);
 
             // when
