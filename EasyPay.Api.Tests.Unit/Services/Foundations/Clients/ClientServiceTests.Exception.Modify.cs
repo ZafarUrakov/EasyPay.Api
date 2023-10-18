@@ -19,7 +19,8 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
     {
         [Fact]
         public async Task ShouldThrowCriticalDependencyExceptionOnModifyIfSqlErrorOccursAndLogItAsync()
-        {// given
+        {
+            // given
             Client randomClient = CreateRandomClient();
             SqlException sqlException = GetSqlError();
 
@@ -29,33 +30,25 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             var expectedClientDependencyException =
                 new ClientDependencyException(failedClientStorageException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
+            this.storageBrokerMock.Setup(broker =>
+                broker.UpdateClientAsync(randomClient))
                     .Throws(sqlException);
 
             // when
             ValueTask<Client> modifyClientTask =
                 this.clientService.ModifyClientAsync(randomClient);
 
-            ClientDependencyException actualGroupDependencyException =
+            ClientDependencyException actualClientDependencyException =
                  await Assert.ThrowsAsync<ClientDependencyException>(
                     modifyClientTask.AsTask);
 
             // then
-            actualGroupDependencyException.Should().BeEquivalentTo(
+            actualClientDependencyException.Should().BeEquivalentTo(
                 expectedClientDependencyException);
-
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectClientByIdAsync(randomClient.ClientId),
-                    Times.Never);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateClientAsync(randomClient),
-                    Times.Never);
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
