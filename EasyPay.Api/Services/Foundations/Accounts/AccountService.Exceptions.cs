@@ -57,7 +57,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
                 var lockedAccountException =
                     new LockedAccountException(dbUpdateConcurrencyException);
 
-                throw CreateAndLogDependencyException(lockedAccountException);
+                throw CreateAndLogDependencyValidationException(lockedAccountException);
             }
             catch (DbUpdateException dbUpdateException)
             {
