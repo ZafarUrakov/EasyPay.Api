@@ -65,7 +65,10 @@ namespace EasyPay.Api.Services.Foundations.Clients
             return await this.storageBroker.DeleteClientAsync(maybeclient);
         });
 
-        public ValueTask<Client> ModifyClientAsync(Client client) =>
-            this.storageBroker.UpdateClientAsync(client);
+        public ValueTask<Client> ModifyClientAsync(Client client)
+        {
+            throw new NotImplementedException();
+        }
+        
     }
 }
