@@ -72,6 +72,5 @@ namespace EasyPay.Api.Services.Foundations.Clients
 
             return await this.storageBroker.UpdateClientAsync(client);
         });
-        
     }
 }

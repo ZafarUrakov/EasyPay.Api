@@ -52,7 +52,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfLocationNotFoundAndLogItAsync()
+        public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfClientNotFoundAndLogItAsync()
         {
             // given
             Guid someclientId = Guid.NewGuid();

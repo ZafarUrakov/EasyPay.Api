@@ -117,5 +117,46 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfClientDoesNotExistAndLogItAsync()
+        {
+            // given
+            Client randomClient = CreateRandomClient();
+            Client nonExistClient = randomClient;
+            Client nullClient = null;
+
+            var notFoundClientException =
+                new NotFoundClientException(nonExistClient.ClientId);
+
+            var expectedClientValidationException =
+                new ClientValidationException(notFoundClientException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectClientByIdAsync(nonExistClient.ClientId))
+                    .ReturnsAsync(nullClient);
+
+            // when
+            ValueTask<Client> modifyClientTask = 
+                this.clientService.ModifyClientAsync(nonExistClient);
+
+            ClientValidationException actualClientValidationException =
+                await Assert.ThrowsAsync<ClientValidationException>
+                    (modifyClientTask.AsTask);
+
+            // then
+            actualClientValidationException.Should().BeEquivalentTo(expectedClientValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectClientByIdAsync(nonExistClient.ClientId), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedClientValidationException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
