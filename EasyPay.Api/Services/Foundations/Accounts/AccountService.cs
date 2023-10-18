@@ -39,37 +39,18 @@ namespace EasyPay.Api.Services.Foundations.Accounts
             return await this.storageBroker.InsertAccountAsync(account);
         });
 
-        public async ValueTask<Account> RemoveAccountByIdAsync(Guid accountId)
+        public ValueTask<Account> RemoveAccountByIdAsync(Guid accountId) =>
+        TryCatch(async () =>
         {
-            try
-            {
-                Validate((Rule: IsInvalid(accountId), Parameter: nameof(Account.AccountId)));
+            ValidateAccountId(accountId);
 
-                Account maybeAccount = await this.storageBroker.SelectAccountByIdAsync(accountId);
+            Account maybeAccount =
+                await this.storageBroker.SelectAccountByIdAsync(accountId);
 
-                ValidateStorageAccount(maybeAccount, accountId);
+            ValidateStorageAccount(maybeAccount, accountId);
 
-
-                return await this.storageBroker.DeleteAccountAsync(maybeAccount);
-            }
-            catch (InvalidAccountException invalidAccountException)
-            {
-                var accountValidationException =
-                    new AccountValidationException(invalidAccountException);
-
-                this.loggingBroker.LogError(accountValidationException);
-                throw accountValidationException;
-            }
-            catch(NotFoundAccountException notFoundAccountException)
-            {
-                var accountValidationException =
-                    new AccountValidationException(notFoundAccountException);
-
-                this.loggingBroker.LogError(accountValidationException);
-                throw accountValidationException;
-            }
-            
-        }
+            return await this.storageBroker.DeleteAccountAsync(maybeAccount);
+        });
 
         public ValueTask<Account> RetrieveAccountByIdAsync(Guid accountId) =>
         TryCatch( async() =>
