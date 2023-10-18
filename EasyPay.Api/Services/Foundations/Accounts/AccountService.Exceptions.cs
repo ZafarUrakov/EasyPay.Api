@@ -54,11 +54,10 @@ namespace EasyPay.Api.Services.Foundations.Accounts
             }
             catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
             {
-                //var lockedAccountException =
-                //    new LockedAccountException(dbUpdateConcurrencyException);
+                var lockedAccountException =
+                    new LockedAccountException(dbUpdateConcurrencyException);
 
-                //throw CreateAndLogDependencyValidationException(lockedAccountException);
-                throw dbUpdateConcurrencyException;
+                throw CreateAndLogDependencyValidationException(lockedAccountException);
             }
             catch (DbUpdateException dbUpdateException)
             {
