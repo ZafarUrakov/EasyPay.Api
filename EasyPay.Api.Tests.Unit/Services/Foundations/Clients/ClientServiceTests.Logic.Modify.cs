@@ -7,7 +7,6 @@ using EasyPay.Api.Models.Clients;
 using FluentAssertions;
 using Force.DeepCloner;
 using Moq;
-using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -21,28 +20,19 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             // given 
             Client randomClient = CreateRandomClient();
             Client inputClient = randomClient;
-            Client persistedClient = inputClient.DeepClone();
-            Client updateClient = inputClient;
-            Client expectedClient = updateClient.DeepClone();
-            Guid clientId = inputClient.ClientId;
-
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectClientByIdAsync(clientId))
-                    .ReturnsAsync(persistedClient);
+            Client updatedClient = inputClient;
+            Client expectedClient = updatedClient.DeepClone();
 
             this.storageBrokerMock.Setup(broker =>
                 broker.UpdateClientAsync(inputClient))
-                    .ReturnsAsync(updateClient);
+                    .ReturnsAsync(updatedClient);
 
             //when
             Client actualClient =
                 await this.clientService.ModifyClientAsync(inputClient);
 
             // then
-            actualClient.Should().BeEquivalentTo(persistedClient);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectClientByIdAsync(clientId), Times.Once);
+            actualClient.Should().BeEquivalentTo(expectedClient);
 
             this.storageBrokerMock.Verify(broker =>
             broker.UpdateClientAsync(inputClient), Times.Once);
