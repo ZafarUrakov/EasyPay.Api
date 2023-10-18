@@ -70,7 +70,12 @@ namespace EasyPay.Api.Services.Foundations.Clients
         {
             ValidateClientOnAdd(client);
 
+            Client maybeClient = await this.storageBroker.SelectClientByIdAsync(client.ClientId);
+
+            ValidateStorageClient(maybeClient, client.ClientId);
+
             return await this.storageBroker.UpdateClientAsync(client);
         });
+        
     }
 }
