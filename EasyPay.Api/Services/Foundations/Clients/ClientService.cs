@@ -45,11 +45,11 @@ namespace EasyPay.Api.Services.Foundations.Clients
         {
             ValidateClientId(clientId);
 
-            Client maybeclient =  await this.storageBroker.SelectClientByIdAsync(clientId);
+            Client maybeClient =  await this.storageBroker.SelectClientByIdAsync(clientId);
 
-            ValidateStorageClient(maybeclient, clientId);
+            ValidateStorageClient(maybeClient, clientId);
 
-            return maybeclient;
+            return maybeClient;
         });
 
         public ValueTask<Client> RemoveClientByIdAsync(Guid clientId) =>
@@ -68,7 +68,7 @@ namespace EasyPay.Api.Services.Foundations.Clients
         public ValueTask<Client> ModifyClientAsync(Client client) =>
         TryCatch(async () =>
         {
-            ValidateClientOnAdd(client);
+            ValidateClientModify(client);
 
             Client maybeClient = await this.storageBroker.SelectClientByIdAsync(client.ClientId);
 
