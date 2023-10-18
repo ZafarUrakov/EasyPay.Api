@@ -16,11 +16,13 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
     public partial class ClientServiceTests
     {
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfIdIsInvalidAndLogItAsync()
+        public async Task ShouldThrowValidationExceptionOnRemoveIfIdIsInvalidAndLogItAsync()
         {
-            // given
-            Guid  invalidClientId = Guid.Empty;
-            var invalidClientException = new InvalidClientException();
+            // given 
+            Guid invalidClientId = Guid.Empty;
+
+            var invalidClientException =
+                new InvalidClientException();
 
             invalidClientException.AddData(
                 key: nameof(Client.ClientId),
@@ -30,14 +32,15 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
                 new ClientValidationException(invalidClientException);
 
             // when
-            ValueTask<Client> retrieveClientById = 
-                this.clientService.RetrieveClientByIdAsync(invalidClientId);
+            ValueTask<Client> removeClientById =
+                this.clientService.RemoveClientByIdAsync(invalidClientId);
 
             ClientValidationException actualClientValidationException =
-                await Assert.ThrowsAsync<ClientValidationException>(retrieveClientById.AsTask);
-
+                await Assert.ThrowsAsync<ClientValidationException>(
+                    removeClientById.AsTask);
             // then
-            actualClientValidationException.Should().BeEquivalentTo(expectedClientValidationException);
+            actualClientValidationException.Should()
+                .BeEquivalentTo(expectedClientValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
@@ -46,45 +49,51 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectClientByIdAsync(It.IsAny<Guid>()), Times.Never);
 
-            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.Verify(broker =>
+            broker.DeleteClientAsync(It.IsAny<Client>()), Times.Never);
+
             this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfClientNotFoundAndLogItAsync()
+        public async Task ShouldThrowNotFoundExceptionOnRemoveClientByIdIsNotFoundAndLogItAsync()
         {
             // given
-            Guid someclientId = Guid.NewGuid();
+            Guid inputClientId = Guid.NewGuid();
             Client noClient = null;
 
             var notFoundClientException =
-                new NotFoundClientException(someclientId);
+                new NotFoundClientException(inputClientId);
 
-            var expetedClientValidationException =
+            var expectedClientValidationException =
                 new ClientValidationException(notFoundClientException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectClientByIdAsync(
-                    It.IsAny<Guid>())).ReturnsAsync(noClient);
+                broker.SelectClientByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(noClient);
 
             // when
-            ValueTask<Client> retriveByIdClientTask =
-                this.clientService.RetrieveClientByIdAsync(someclientId);
+            ValueTask<Client> removeClientById =
+                this.clientService.RemoveClientByIdAsync(inputClientId);
 
             var actualClientValidationException =
                 await Assert.ThrowsAsync<ClientValidationException>(
-                    retriveByIdClientTask.AsTask);
+                    removeClientById.AsTask);
 
             // then
-            actualClientValidationException.Should().BeEquivalentTo(expetedClientValidationException);
+            actualClientValidationException.Should().BeEquivalentTo(expectedClientValidationException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectClientByIdAsync(someclientId), Times.Once);
+                broker.SelectClientByIdAsync(It.IsAny<Guid>()), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-            broker.LogError(It.Is(SameExceptionAs(
-                expetedClientValidationException))), Times.Once);
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedClientValidationException))), Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.DeleteClientAsync(It.IsAny<Client>()), Times.Never);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

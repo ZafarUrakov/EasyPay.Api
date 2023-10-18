@@ -1,4 +1,4 @@
-﻿//===========================
+//===========================
 // Copyright (c) Tarteeb LLC
 // Manage Your Money Easy
 //===========================
@@ -20,7 +20,6 @@ namespace EasyPay.Api.Services.Foundations.Clients
         /// <exception cref="Models.Clients.Exceptions.ClientDependencyException"></exception>
         /// <exception cref="Models.Clients.Exceptions.ClientServiceException"></exception>     
         IQueryable<Client> RetrieveAllClients();
-
         /// <exception cref="Models.Clients.Exceptions.ClientDependencyException"></exception>
         /// <exception cref="Models.Clients.Exceptions.ClientServiceException"></exception>   
         ValueTask<Client> RetrieveClientByIdAsync(Guid clientId);
