@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Accounts.Exceptions;
 using FluentAssertions;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
@@ -54,6 +55,47 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
 
             this.storageBrokerMock.Verify(broker =>
                 broker.DeleteAccountAsync(It.IsAny<Account>()), Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowSqlExceptionOnRemoveByIdIfSqlErrorOccursAndLogItAsync()
+        {
+            //given
+            Guid someAccountId = Guid.NewGuid();
+            Guid inputAccountId = someAccountId;
+
+            SqlException sqlException = GetSqlError();
+
+            var failedStorageAccountException =
+                new FailedStorageAccountException(sqlException);
+
+            AccountDependencyException expectedAccountDependencyException =
+                new AccountDependencyException(failedStorageAccountException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectAccountByIdAsync(It.IsAny<Guid>())).ThrowsAsync(sqlException);
+
+            //when
+            ValueTask<Account> removeAccountByIdTask =
+                this.accountService.RemoveAccountByIdAsync(inputAccountId);
+
+            AccountDependencyException actualAccountDependencyException =
+                await Assert.ThrowsAsync<AccountDependencyException>(
+                    removeAccountByIdTask.AsTask);
+
+            //then
+            actualAccountDependencyException.Should().BeEquivalentTo(
+                expectedAccountDependencyException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAccountByIdAsync(It.IsAny<Guid>()), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogCritical(It.Is(SameExceptionAs(
+                    expectedAccountDependencyException))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
