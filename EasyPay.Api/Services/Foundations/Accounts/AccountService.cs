@@ -43,10 +43,14 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         {
             try
             {
-                //Account maybeAccount =
-                //    await this.storageBroker.SelectAccountByIdAsync(account.AccountId);
+                Account maybeAccount =
+                    await this.storageBroker.SelectAccountByIdAsync(account.AccountId);
 
-                ValidateAccountOnModify(account);
+                //ValidateAccountOnModify(account);
+                if(maybeAccount is null)
+                {
+                    throw new NotFoundAccountException(account.AccountId);
+                }
 
                 return await this.storageBroker.UpdateAccountAsync(account);
 
@@ -62,6 +66,13 @@ namespace EasyPay.Api.Services.Foundations.Accounts
             catch(InvalidAccountException invalidAccountException)
             {
                 AccountValidationException accountValidationException = new AccountValidationException(invalidAccountException);
+
+                this.loggingBroker.LogError(accountValidationException);
+                throw accountValidationException;
+            }
+            catch(NotFoundAccountException notFoundAccountException)
+            {
+                AccountValidationException accountValidationException = new AccountValidationException(notFoundAccountException);
 
                 this.loggingBroker.LogError(accountValidationException);
                 throw accountValidationException;
