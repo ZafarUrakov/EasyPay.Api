@@ -21,14 +21,14 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             // given 
             Client randomClient = CreateRandomClient();
             Client inputClient = randomClient;
-            Client storageclient = inputClient;
+            Client persistedclient = inputClient.DeepClone();
             Client updatedClient = inputClient;
             Client expectedClient = updatedClient.DeepClone();
             Guid InputClientId = inputClient.ClientId;
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectClientByIdAsync(InputClientId))
-                    .ReturnsAsync(storageclient);
+                    .ReturnsAsync(persistedclient);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.UpdateClientAsync(inputClient))
