@@ -45,7 +45,7 @@ namespace EasyPay.Api.Services.Foundations.Clients
         {
             ValidateClientId(clientId);
 
-            Client maybeClient =  await this.storageBroker.SelectClientByIdAsync(clientId);
+            Client maybeClient = await this.storageBroker.SelectClientByIdAsync(clientId);
 
             ValidateStorageClient(maybeClient, clientId);
 
@@ -77,6 +77,6 @@ namespace EasyPay.Api.Services.Foundations.Clients
 
             return await this.storageBroker.UpdateClientAsync(client);
         });
-        
+
     }
 }

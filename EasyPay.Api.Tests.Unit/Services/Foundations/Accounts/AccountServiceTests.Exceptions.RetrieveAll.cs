@@ -3,11 +3,11 @@
 // Manage Your Money Easy
 //===========================
 
-using System;
 using EasyPay.Api.Models.Accounts.Exceptions;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
+using System;
 using Xunit;
 
 namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts

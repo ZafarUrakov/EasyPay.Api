@@ -19,7 +19,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
         public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfIdIsInvalidAndLogItAsync()
         {
             // given
-            Guid  invalidClientId = Guid.Empty;
+            Guid invalidClientId = Guid.Empty;
             var invalidClientException = new InvalidClientException();
 
             invalidClientException.AddData(
@@ -30,7 +30,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
                 new ClientValidationException(invalidClientException);
 
             // when
-            ValueTask<Client> retrieveClientById = 
+            ValueTask<Client> retrieveClientById =
                 this.clientService.RetrieveClientByIdAsync(invalidClientId);
 
             ClientValidationException actualClientValidationException =

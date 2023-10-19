@@ -34,7 +34,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
             {
                 throw CreateAndLogValidationException(invalidAccountException);
             }
-            catch(NotFoundAccountException notFoundAccountException)
+            catch (NotFoundAccountException notFoundAccountException)
             {
                 throw CreateAndLogValidationException(notFoundAccountException);
             }
@@ -87,7 +87,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
 
                 throw CreateAndLogCriticalDependencyException(failedStorageAccountException);
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 var failedAccountServiceException = new FailedAccountServiceException(exception);
 

@@ -29,7 +29,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectClientByIdAsync(InputClientId))
                     .ReturnsAsync(storageclient);
-            
+
             this.storageBrokerMock.Setup(broker =>
                 broker.UpdateClientAsync(inputClient))
                     .ReturnsAsync(updatedClient);

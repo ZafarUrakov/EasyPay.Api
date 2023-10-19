@@ -20,10 +20,10 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             // given 
             SqlException sqlException = GetSqlError();
 
-            var failedClientStorageException = 
+            var failedClientStorageException =
                 new FailedClientStorageException(sqlException);
 
-            var expectedClientDependencyException = 
+            var expectedClientDependencyException =
                 new ClientDependencyException(failedClientStorageException);
 
             this.storageBrokerMock.Setup(broker =>
@@ -33,7 +33,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             Action retrieveAllClientsAction = () =>
                 this.clientService.RetrieveAllClients();
 
-            ClientDependencyException actualClientDependencyException = 
+            ClientDependencyException actualClientDependencyException =
                 Assert.Throws<ClientDependencyException>(retrieveAllClientsAction);
 
             // then
@@ -59,10 +59,10 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             string exceptionMessage = GetRandomString();
             var serverException = new Exception(exceptionMessage);
 
-            var failedClientServiceException = 
+            var failedClientServiceException =
                 new FailedClientServiceException(serverException);
 
-            var expectedClientServiceException = 
+            var expectedClientServiceException =
                 new ClientServiceException(failedClientServiceException);
 
             this.storageBrokerMock.Setup(broker =>
@@ -72,7 +72,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             Action retrieveAllclientActions = () =>
                 this.clientService.RetrieveAllClients();
 
-            ClientServiceException actualClientServiceException = 
+            ClientServiceException actualClientServiceException =
                 Assert.Throws<ClientServiceException>(retrieveAllclientActions);
 
             // when

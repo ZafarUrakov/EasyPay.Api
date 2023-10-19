@@ -3,10 +3,10 @@
 // Manage Your Money Easy
 //===========================
 
-using System.Linq;
 using EasyPay.Api.Models.Accounts;
 using FluentAssertions;
 using Moq;
+using System.Linq;
 using Xunit;
 
 namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts

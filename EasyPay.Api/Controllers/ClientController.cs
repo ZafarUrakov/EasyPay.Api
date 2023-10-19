@@ -3,12 +3,12 @@
 // Manage Your Money Easy
 //===========================
 
-using System.Threading.Tasks;
 using EasyPay.Api.Models.Clients;
 using EasyPay.Api.Models.Clients.Exceptions;
 using EasyPay.Api.Services.Foundations.Clients;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
+using System.Threading.Tasks;
 
 namespace EasyPay.Api.Controllers
 {
