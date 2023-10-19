@@ -152,5 +152,51 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnModifyIfDatabaseUpdateErrorOccursAndLogItAsync()
+        {
+            // given
+            Client randomClient = CreateRandomClient();
+            Client someClient = randomClient;
+            Guid clientId = someClient.ClientId;
+            var serviceException = new Exception();
+            
+            var failedClientServiceException =
+                new FailedClientServiceException(serviceException);
+
+            ClientServiceException expectedClientServiceException =
+                new ClientServiceException(failedClientServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                    broker.SelectClientByIdAsync(clientId))
+                .Throws(serviceException);
+
+            // when
+            ValueTask<Client> modifyClientTask =
+                this.clientService.ModifyClientAsync(someClient);
+
+            ClientServiceException actualClientServiceException =
+                await Assert.ThrowsAsync<ClientServiceException>(
+                    modifyClientTask.AsTask);
+
+            // then
+            actualClientServiceException.Should()
+                .BeEquivalentTo(expectedClientServiceException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedClientServiceException))), Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectClientByIdAsync(clientId), Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateClientAsync(someClient), Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
