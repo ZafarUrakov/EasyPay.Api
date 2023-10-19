@@ -77,5 +77,24 @@ namespace EasyPay.Api.Controllers
                 return InternalServerError(clientServiceException.InnerException);
             }
         }
+
+        [HttpGet("clientsAll")]
+        public ActionResult<IQueryable<Client>> GetAllClients()
+        {
+            try
+            {
+                IQueryable<Client> allClients = this.clientService.RetrieveAllClients();
+
+                return Ok(allClients);
+            }
+            catch (ClientDependencyException clientDependencyException)
+            {
+                return InternalServerError(clientDependencyException.InnerException);
+            }
+            catch (ClientServiceException clientServiceException)
+            {
+                return InternalServerError(clientServiceException.InnerException);
+            }
+        }
     }
 }
