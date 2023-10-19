@@ -26,7 +26,8 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
                 key: nameof(Account.AccountId),
                 values: "Id is required");
 
-            var expectedAccountValidationException = new AccountValidationException(invalidAccountException);
+            var expectedAccountValidationException =
+                new AccountValidationException(invalidAccountException);
 
             //when
             ValueTask<Account> retrieveAccountByIdTask =
