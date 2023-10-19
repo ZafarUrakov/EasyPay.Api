@@ -50,12 +50,12 @@ namespace EasyPay.Api.Services.Foundations.Clients
 
                 throw CreateAndLogDependencyValidationException(alreadyExistsClientException);
             }
-            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
-            {
-                var lockedClientException = new LockedClientException(dbUpdateConcurrencyException);
+            //catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            //{
+            //    var lockedClientException = new LockedClientException(dbUpdateConcurrencyException);
 
-                throw CreateAndLogDependencyValidationException(lockedClientException);
-            }
+            //    throw CreateAndLogDependencyValidationException(lockedClientException);
+            //}
             catch (DbUpdateException dbUpdateException)
             {
                 var failedServiceStrageException = new FailedClientStorageException(dbUpdateException);
