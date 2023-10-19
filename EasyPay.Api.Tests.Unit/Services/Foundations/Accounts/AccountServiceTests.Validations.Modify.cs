@@ -3,6 +3,7 @@
 // Manage Your Money Easy
 //===========================
 
+using System;
 using System.Threading.Tasks;
 using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Accounts.Exceptions;
@@ -109,6 +110,43 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfAccountDoesNOtExistsAndLogItAsync()
+        {
+            //given
+            Account randomAccount = CreateRandomAccount();
+            Account nonExistsAccount = randomAccount;
+            Account nullAccount = null;
+
+            var notFoundAccountException =
+                new NotFoundAccountException(nonExistsAccount.AccountId);
+
+            var expectedAccountValidationException =
+                new AccountValidationException(notFoundAccountException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectAccountByIdAsync(nonExistsAccount.AccountId)).ReturnsAsync(nullAccount);
+
+            //when
+            ValueTask<Account> modifyAccountTask =
+                this.accountService.ModifyAccountAsync(nonExistsAccount);
+
+            AccountValidationException actualAccountValidationException =
+                await Assert.ThrowsAsync<AccountValidationException>(modifyAccountTask.AsTask);
+
+            //then
+            actualAccountValidationException.Should().BeEquivalentTo(expectedAccountValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAccountByIdAsync(nonExistsAccount.AccountId), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(expectedAccountValidationException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
