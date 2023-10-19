@@ -1,4 +1,4 @@
-﻿//===========================
+//===========================
 // Copyright (c) Tarteeb LLC
 // Manage Your Money Easy
 //===========================
@@ -77,6 +77,5 @@ namespace EasyPay.Api.Services.Foundations.Clients
 
             return await this.storageBroker.UpdateClientAsync(client);
         });
-
     }
 }
