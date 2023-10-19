@@ -9,7 +9,6 @@ using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using System;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -22,6 +21,8 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
         {
             // given
             Client randomClient = CreateRandomClient();
+            Client someClient = randomClient;
+            Guid clientId = someClient.ClientId;
             SqlException sqlException = GetSqlError();
 
             var failedClientStorageException =
@@ -31,33 +32,33 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
                 new ClientDependencyException(failedClientStorageException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.UpdateClientAsync(randomClient))
-                    .Throws(sqlException);
+                broker.SelectClientByIdAsync(clientId)).Throws(sqlException);
 
             // when
             ValueTask<Client> modifyClientTask =
-                this.clientService.ModifyClientAsync(randomClient);
+                this.clientService.ModifyClientAsync(someClient);
 
             ClientDependencyException actualClientDependencyException =
                  await Assert.ThrowsAsync<ClientDependencyException>(
                     modifyClientTask.AsTask);
 
             // then
-            actualClientDependencyException.Should().BeEquivalentTo(
-                expectedClientDependencyException);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.UpdateClientAsync(randomClient),
-                    Times.Once);
+            actualClientDependencyException.Should()
+                .BeEquivalentTo(expectedClientDependencyException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
-                    expectedClientDependencyException))),
-                        Times.Once);
+                    expectedClientDependencyException))),Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectClientByIdAsync(clientId),Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateClientAsync(someClient), Times.Never);
+
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

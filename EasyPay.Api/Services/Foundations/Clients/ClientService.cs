@@ -68,12 +68,12 @@ namespace EasyPay.Api.Services.Foundations.Clients
         public ValueTask<Client> ModifyClientAsync(Client client) =>
         TryCatch(async () =>
         {
-            ValidateClientModify(client);
+            ValidateClientOnModify(client);
 
-            //Client maybeClient =
-            //    await this.storageBroker.SelectClientByIdAsync(client.ClientId);
+            Client maybeClient =
+                await this.storageBroker.SelectClientByIdAsync(client.ClientId);
 
-            //ValidateStorageClient(maybeClient, client.ClientId);
+            ValidateAgainstStorageClientOnModify(client, maybeClient);
 
             return await this.storageBroker.UpdateClientAsync(client);
         });

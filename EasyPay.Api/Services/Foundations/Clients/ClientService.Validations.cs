@@ -63,9 +63,23 @@ namespace EasyPay.Api.Services.Foundations.Clients
             }
         }
 
-        private static void ValidateClientModify(Client client)
+        private static void ValidateClientOnModify(Client client)
         {
             ValidateClientNotNull(client);
+
+            Validate(
+               (Rule: IsInvalid(client.ClientId), Parameter: nameof(Client.ClientId)),
+               (Rule: IsInvalid(client.FirstName), Parameter: nameof(Client.FirstName)),
+               (Rule: IsInvalid(client.LastName), Parameter: nameof(Client.LastName)),
+               (Rule: IsInvalid(client.BirthDate), Parameter: nameof(Client.BirthDate)),
+               (Rule: IsInvalid(client.Email), Parameter: nameof(Client.Email)),
+               (Rule: IsInvalid(client.PhoneNumber), Parameter: nameof(Client.PhoneNumber)),
+               (Rule: IsInvalid(client.Address), Parameter: nameof(Client.Address)));
+        }
+
+        private static void ValidateAgainstStorageClientOnModify(Client client, Client storageClient)
+        {
+            ValidateStorageClient(storageClient, client.ClientId);
 
             Validate(
                 (Rule: IsInvalid(client.ClientId), Parameter: nameof(Client.ClientId)),
