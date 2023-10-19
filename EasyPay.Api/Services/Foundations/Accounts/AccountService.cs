@@ -8,6 +8,7 @@ using EasyPay.Api.Brokers.Loggings;
 using EasyPay.Api.Brokers.Storages;
 using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Accounts.Exceptions;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Data;
 using System.Linq;
@@ -76,6 +77,14 @@ namespace EasyPay.Api.Services.Foundations.Accounts
 
                 this.loggingBroker.LogError(accountValidationException);
                 throw accountValidationException;
+            }
+            catch(SqlException sqlException)
+            {
+                FailedStorageAccountException failedStorageAccountException = new FailedStorageAccountException(sqlException);
+                AccountDependencyException accountDependencyException = new AccountDependencyException(failedStorageAccountException);
+
+                this.loggingBroker.LogCritical(accountDependencyException);
+                throw accountDependencyException;
             }
 
         }

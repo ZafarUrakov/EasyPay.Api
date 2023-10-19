@@ -27,11 +27,11 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
 
             SqlException sqlException = GetSqlError();
 
-            var failedClientStorageException =
-                new FailedClientStorageException(sqlException);
+            var failedStorageAccountException =
+                new FailedStorageAccountException(sqlException);
 
             var expectedAccountDependencyException =
-                new AccountDependencyException(failedClientStorageException);
+                new AccountDependencyException(failedStorageAccountException);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.UpdateAccountAsync(someAccount)).ThrowsAsync(sqlException);
