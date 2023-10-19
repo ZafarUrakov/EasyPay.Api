@@ -1,4 +1,4 @@
-﻿//===========================
+//===========================
 // Copyright (c) Tarteeb LLC
 // Manage Your Money Easy
 //===========================
@@ -45,11 +45,11 @@ namespace EasyPay.Api.Services.Foundations.Clients
         {
             ValidateClientId(clientId);
 
-            Client maybeclient =  await this.storageBroker.SelectClientByIdAsync(clientId);
+            Client maybeClient = await this.storageBroker.SelectClientByIdAsync(clientId);
 
-            ValidateStorageClient(maybeclient, clientId);
+            ValidateStorageClient(maybeClient, clientId);
 
-            return maybeclient;
+            return maybeClient;
         });
 
         public ValueTask<Client> RemoveClientByIdAsync(Guid clientId) =>
@@ -63,6 +63,19 @@ namespace EasyPay.Api.Services.Foundations.Clients
             ValidateStorageClient(maybeclient, clientId);
 
             return await this.storageBroker.DeleteClientAsync(maybeclient);
+        });
+
+        public ValueTask<Client> ModifyClientAsync(Client client) =>
+        TryCatch(async () =>
+        {
+            ValidateClientOnModify(client);
+
+            Client maybeClient =
+                await this.storageBroker.SelectClientByIdAsync(client.ClientId);
+
+            ValidateAgainstStorageClientOnModify(client, maybeClient);
+
+            return await this.storageBroker.UpdateClientAsync(client);
         });
     }
 }

@@ -53,7 +53,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         });
 
         public ValueTask<Account> RetrieveAccountByIdAsync(Guid accountId) =>
-        TryCatch( async() =>
+        TryCatch(async () =>
         {
             ValidateAccountId(accountId);
 
