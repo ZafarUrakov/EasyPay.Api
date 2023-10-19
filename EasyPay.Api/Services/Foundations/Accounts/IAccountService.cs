@@ -16,5 +16,6 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         IQueryable<Account> RetrieveAllAccounts();
         ValueTask<Account> RetrieveAccountByIdAsync(Guid accountId);
         ValueTask<Account> RemoveAccountByIdAsync(Guid accountId);
+        ValueTask<Account> ModifyAccountAsync(Account account);
     }
 }
