@@ -119,7 +119,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             var lockedClientException =
                 new LockedClientException(dbUpdateConcurrencyException);
 
-            var expectedClientDependencyValidatoinException =
+            var expectedClientDependencyValidationException =
                 new ClientDependencyValidationException(lockedClientException);
 
             this.storageBrokerMock.Setup(broker =>
@@ -136,11 +136,11 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
 
             // then
             actualClientDependencyValidationException.Should()
-                .BeEquivalentTo(expectedClientDependencyValidatoinException);
+                .BeEquivalentTo(expectedClientDependencyValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
-                    expectedClientDependencyValidatoinException))), Times.Once);
+                    expectedClientDependencyValidationException))), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectClientByIdAsync(clientId), Times.Once);
