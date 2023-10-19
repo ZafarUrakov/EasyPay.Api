@@ -43,14 +43,14 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         {
             try
             {
-                Account maybeAccount =
-                    await this.storageBroker.SelectAccountByIdAsync(account.AccountId);
+                //Account maybeAccount =
+                //    await this.storageBroker.SelectAccountByIdAsync(account.AccountId);
 
-                //ValidateAccountOnModify(account);
-                if(maybeAccount is null)
-                {
-                    throw new NotFoundAccountException(account.AccountId);
-                }
+                ////ValidateAccountOnModify(account);
+                //if(maybeAccount is null)
+                //{
+                //    throw new NotFoundAccountException(account.AccountId);
+                //}
 
                 return await this.storageBroker.UpdateAccountAsync(account);
 
