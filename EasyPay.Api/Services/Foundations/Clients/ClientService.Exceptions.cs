@@ -56,12 +56,12 @@ namespace EasyPay.Api.Services.Foundations.Clients
 
                 throw CreateAndLogDependencyValidationException(lockedClientException);
             }
-            catch (DbUpdateException dbUpdateException)
-            {
-                var failedServiceStrageException = new FailedClientStorageException(dbUpdateException);
+            //catch (DbUpdateException dbUpdateException)
+            //{
+            //    var failedServiceStrageException = new FailedClientStorageException(dbUpdateException);
 
-                throw CreateAndLogDependencyException(failedServiceStrageException);
-            }
+            //    throw CreateAndLogDependencyException(failedServiceStrageException);
+            //}
             catch (Exception exception)
             {
                 var failedClientServiceException = new FailedClientServiceException(exception);
