@@ -62,6 +62,12 @@ namespace EasyPay.Api.Services.Foundations.Clients
 
                 throw CreateAndLogDependencyException(failedServiceStrageException);
             }
+            catch (Exception exception)
+            {
+                var failedClientServiceException = new FailedClientServiceException(exception);
+
+                throw CreateAndLogServiceException(failedClientServiceException);
+            }
         }
 
         private IQueryable<Client> TryCatch(ReturningClientsFunction returningClientsFunction)
