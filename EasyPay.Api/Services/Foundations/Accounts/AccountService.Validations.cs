@@ -35,6 +35,18 @@ namespace EasyPay.Api.Services.Foundations.Accounts
                 (Rule: IsInvalid(account.ClientId), Parameter: nameof(Account.ClientId)));
         }
 
+        private void ValidateAgainstStorageAccountOnModify(Account inputAccount, Account storageAccount)
+        {
+            ValidateStorageAccount(storageAccount, inputAccount.AccountId);
+
+            Validate(
+                (Rule: IsInvalid(inputAccount.AccountId), Parameter: nameof(Account.AccountId)),
+                (Rule: IsInvalid(inputAccount.AccountNumber), Parameter: nameof(Account.AccountNumber)),
+                (Rule: IsInvalid(inputAccount.Login), Parameter: nameof(Account.Login)),
+                (Rule: IsInvalid(inputAccount.Password), Parameter: nameof(Account.Password)),
+                (Rule: IsInvalid(inputAccount.ClientId), Parameter: nameof(Account.ClientId)));
+        }
+
         private static void ValidateAccountNotNull(Account account)
         {
             if (account == null)

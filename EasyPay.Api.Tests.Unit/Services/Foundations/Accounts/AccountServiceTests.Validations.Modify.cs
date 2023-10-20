@@ -26,10 +26,6 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
             var expectedAccountValidationException =
                 new AccountValidationException(nullAccountException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.UpdateAccountAsync(nullAccount))
-                    .ThrowsAsync(nullAccountException);
-
             //when
             ValueTask<Account> modifyAccountTask =
                 this.accountService.ModifyAccountAsync(nullAccount);

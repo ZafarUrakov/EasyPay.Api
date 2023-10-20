@@ -9,6 +9,7 @@ using EasyPay.Api.Brokers.Storages;
 using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Accounts.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.Identity.Client;
 using System;
 using System.Data;
 using System.Linq;
@@ -43,52 +44,14 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         public ValueTask<Account> ModifyAccountAsync(Account account) =>
         TryCatch(async () =>
         {
-            //try
-            //{
+            ValidateAccountOnModify(account);
+
             Account maybeAccount =
                 await this.storageBroker.SelectAccountByIdAsync(account.AccountId);
 
-            //    ////ValidateAccountOnModify(account);
-            //    //if(maybeAccount is null)
-            //    //{
-            //    //    throw new NotFoundAccountException(account.AccountId);
-            //    //}
+            ValidateAgainstStorageAccountOnModify(inputAccount: account, storageAccount: maybeAccount);
 
-
-            //}
-            //catch (NullAccountException nullAccountException)
-            //{
-            //    var accountValidationException =
-            //        new AccountValidationException(nullAccountException);
-
-            //    this.loggingBroker.LogError(accountValidationException);
-            //    throw accountValidationException;
-            //}
-            //catch(InvalidAccountException invalidAccountException)
-            //{
-            //    AccountValidationException accountValidationException = new AccountValidationException(invalidAccountException);
-
-            //    this.loggingBroker.LogError(accountValidationException);
-            //    throw accountValidationException;
-            //}
-            //catch(NotFoundAccountException notFoundAccountException)
-            //{
-            //    AccountValidationException accountValidationException = new AccountValidationException(notFoundAccountException);
-
-            //    this.loggingBroker.LogError(accountValidationException);
-            //    throw accountValidationException;
-            //}
-            //catch(SqlException sqlException)
-            //{
-            //    FailedStorageAccountException failedStorageAccountException = new FailedStorageAccountException(sqlException);
-            //    AccountDependencyException accountDependencyException = new AccountDependencyException(failedStorageAccountException);
-
-            //    this.loggingBroker.LogCritical(accountDependencyException);
-            //    throw accountDependencyException;
-            //}
             return await this.storageBroker.UpdateAccountAsync(account);
-
-
         });
 
         public ValueTask<Account> RemoveAccountByIdAsync(Guid accountId) =>
