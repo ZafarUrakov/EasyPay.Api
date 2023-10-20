@@ -64,7 +64,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
                 var failedStorageAccountException =
                     new FailedStorageAccountException(dbUpdateException);
 
-                throw CreateAndLogCriticalDependencyException(failedStorageAccountException);
+                throw CreateAndLogDependencyException(failedStorageAccountException);
             }
             catch (Exception exception)
             {
