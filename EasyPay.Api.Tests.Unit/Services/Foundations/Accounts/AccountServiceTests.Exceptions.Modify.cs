@@ -95,5 +95,43 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateErrorOccursAndLogItAsync()
+        {
+            //given
+            Account randomAccount = CreateRandomAccount();
+            Account someAccount = randomAccount;
+            Guid accountId = someAccount.AccountId;
+
+            var dbUpdateException = new DbUpdateException();
+            var failedStorageAccountException = new FailedStorageAccountException(dbUpdateException);
+
+            var expectedAccountDependencyException =
+                new AccountDependencyException(failedStorageAccountException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectAccountByIdAsync(accountId)).ThrowsAsync(dbUpdateException);
+
+            //when
+            ValueTask<Account> modifyAccountTask = this.accountService.ModifyAccountAsync(someAccount);
+
+            AccountDependencyException actualAccountDependencyException =
+                await Assert.ThrowsAsync<AccountDependencyException>(modifyAccountTask.AsTask);
+
+            //then
+            actualAccountDependencyException.Should().BeEquivalentTo(expectedAccountDependencyException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAccountByIdAsync(accountId), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(expectedAccountDependencyException))), Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        //[Fact]
     }
 }

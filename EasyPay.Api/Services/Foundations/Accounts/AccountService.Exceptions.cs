@@ -61,10 +61,11 @@ namespace EasyPay.Api.Services.Foundations.Accounts
             }
             catch (DbUpdateException dbUpdateException)
             {
-                var failedStorageAccountException =
-                    new FailedStorageAccountException(dbUpdateException);
+                //var failedStorageAccountException =
+                //    new FailedStorageAccountException(dbUpdateException);
 
-                throw CreateAndLogCriticalDependencyException(failedStorageAccountException);
+                //throw CreateAndLogCriticalDependencyException(failedStorageAccountException);
+                throw dbUpdateException;
             }
             catch (Exception exception)
             {
@@ -122,7 +123,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         private AccountDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
         {
             var accountDependencyException = new AccountDependencyException(exception);
-            this.loggingBroker.LogCritical(accountDependencyException);
+            this.loggingBroker.LogError(accountDependencyException);
 
             return accountDependencyException;
         }
