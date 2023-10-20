@@ -10,6 +10,7 @@ using EasyPay.Api.Models.Accounts.Exceptions;
 using EasyPay.Api.Models.Clients.Exceptions;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
 
@@ -34,7 +35,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
                 new AccountDependencyException(failedStorageAccountException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.UpdateAccountAsync(someAccount)).ThrowsAsync(sqlException);
+                broker.SelectAccountByIdAsync(accountId)).ThrowsAsync(sqlException);
 
             //when
             ValueTask<Account> modifyAccountTask =
@@ -48,11 +49,48 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
                 expectedAccountDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.UpdateAccountAsync(someAccount), Times.Once);
+                broker.SelectAccountByIdAsync(accountId), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
                     expectedAccountDependencyException))), Times.Once);
+
+            //this.storageBrokerMock.Verify(broker =>
+            //    broker.UpdateAccountAsync(It.IsAny<Account>()), Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnModifyifDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
+        {
+            //given
+            Account randomAccount = CreateRandomAccount();
+            Account someAccount = randomAccount;
+            Guid accountId = someAccount.AccountId;
+
+            var dbUpdateConcurrencyException = new DbUpdateConcurrencyException();
+            var lockedAccountException = new LockedAccountException(dbUpdateConcurrencyException);
+            var expectedAccountDependencyValidationException = new AccountDependencyValidationException(lockedAccountException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectAccountByIdAsync(accountId)).ThrowsAsync(dbUpdateConcurrencyException);
+
+            //when
+            ValueTask<Account> modifyAccountTask = this.accountService.ModifyAccountAsync(someAccount);
+
+            AccountDependencyValidationException actualAccountDependencyException =
+                await Assert.ThrowsAsync<AccountDependencyValidationException>(modifyAccountTask.AsTask);
+
+            //then
+            actualAccountDependencyException.Should().BeEquivalentTo(expectedAccountDependencyValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAccountByIdAsync(accountId), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(expectedAccountDependencyValidationException))), Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

@@ -40,54 +40,56 @@ namespace EasyPay.Api.Services.Foundations.Accounts
             return await this.storageBroker.InsertAccountAsync(account);
         });
 
-        public async ValueTask<Account> ModifyAccountAsync(Account account)
+        public ValueTask<Account> ModifyAccountAsync(Account account) =>
+        TryCatch(async () =>
         {
-            try
-            {
-                //Account maybeAccount =
-                //    await this.storageBroker.SelectAccountByIdAsync(account.AccountId);
+            //try
+            //{
+            Account maybeAccount =
+                await this.storageBroker.SelectAccountByIdAsync(account.AccountId);
 
-                ////ValidateAccountOnModify(account);
-                //if(maybeAccount is null)
-                //{
-                //    throw new NotFoundAccountException(account.AccountId);
-                //}
+            //    ////ValidateAccountOnModify(account);
+            //    //if(maybeAccount is null)
+            //    //{
+            //    //    throw new NotFoundAccountException(account.AccountId);
+            //    //}
 
-                return await this.storageBroker.UpdateAccountAsync(account);
 
-            }
-            catch (NullAccountException nullAccountException)
-            {
-                var accountValidationException =
-                    new AccountValidationException(nullAccountException);
+            //}
+            //catch (NullAccountException nullAccountException)
+            //{
+            //    var accountValidationException =
+            //        new AccountValidationException(nullAccountException);
 
-                this.loggingBroker.LogError(accountValidationException);
-                throw accountValidationException;
-            }
-            catch(InvalidAccountException invalidAccountException)
-            {
-                AccountValidationException accountValidationException = new AccountValidationException(invalidAccountException);
+            //    this.loggingBroker.LogError(accountValidationException);
+            //    throw accountValidationException;
+            //}
+            //catch(InvalidAccountException invalidAccountException)
+            //{
+            //    AccountValidationException accountValidationException = new AccountValidationException(invalidAccountException);
 
-                this.loggingBroker.LogError(accountValidationException);
-                throw accountValidationException;
-            }
-            catch(NotFoundAccountException notFoundAccountException)
-            {
-                AccountValidationException accountValidationException = new AccountValidationException(notFoundAccountException);
+            //    this.loggingBroker.LogError(accountValidationException);
+            //    throw accountValidationException;
+            //}
+            //catch(NotFoundAccountException notFoundAccountException)
+            //{
+            //    AccountValidationException accountValidationException = new AccountValidationException(notFoundAccountException);
 
-                this.loggingBroker.LogError(accountValidationException);
-                throw accountValidationException;
-            }
-            catch(SqlException sqlException)
-            {
-                FailedStorageAccountException failedStorageAccountException = new FailedStorageAccountException(sqlException);
-                AccountDependencyException accountDependencyException = new AccountDependencyException(failedStorageAccountException);
+            //    this.loggingBroker.LogError(accountValidationException);
+            //    throw accountValidationException;
+            //}
+            //catch(SqlException sqlException)
+            //{
+            //    FailedStorageAccountException failedStorageAccountException = new FailedStorageAccountException(sqlException);
+            //    AccountDependencyException accountDependencyException = new AccountDependencyException(failedStorageAccountException);
 
-                this.loggingBroker.LogCritical(accountDependencyException);
-                throw accountDependencyException;
-            }
+            //    this.loggingBroker.LogCritical(accountDependencyException);
+            //    throw accountDependencyException;
+            //}
+            return await this.storageBroker.UpdateAccountAsync(account);
 
-        }
+
+        });
 
         public ValueTask<Account> RemoveAccountByIdAsync(Guid accountId) =>
         TryCatch(async () =>
