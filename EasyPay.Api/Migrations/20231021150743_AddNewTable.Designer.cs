@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EasyPay.Api.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    [Migration("20231021113616_CreateTransferTable")]
-    partial class CreateTransferTable
+    [Migration("20231021150743_AddNewTable")]
+    partial class AddNewTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,6 +58,9 @@ namespace EasyPay.Api.Migrations
                     b.Property<Guid>("ClientId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccountNumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");

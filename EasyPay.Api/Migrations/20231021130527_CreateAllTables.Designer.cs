@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EasyPay.Api.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    [Migration("20231010183053_AddClients")]
-    partial class AddClients
+    [Migration("20231021130527_CreateAllTables")]
+    partial class CreateAllTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,11 +27,9 @@ namespace EasyPay.Api.Migrations
 
             modelBuilder.Entity("EasyPay.Api.Models.Accounts.Account", b =>
                 {
-                    b.Property<int>("AccountId")
+                    b.Property<Guid>("AccountId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccountId"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AccountNumber")
                         .HasColumnType("nvarchar(max)");
@@ -64,6 +62,9 @@ namespace EasyPay.Api.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTimeOffset>("BirthDate")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
@@ -81,6 +82,28 @@ namespace EasyPay.Api.Migrations
                     b.ToTable("Clients");
                 });
 
+            modelBuilder.Entity("EasyPay.Api.Models.Transfers.Transfer", b =>
+                {
+                    b.Property<Guid>("TransferId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AccountsAccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ReceiverAccountNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TransferId");
+
+                    b.HasIndex("AccountsAccountId");
+
+                    b.ToTable("Transfers");
+                });
+
             modelBuilder.Entity("EasyPay.Api.Models.Accounts.Account", b =>
                 {
                     b.HasOne("EasyPay.Api.Models.Clients.Client", "Client")
@@ -90,6 +113,15 @@ namespace EasyPay.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("EasyPay.Api.Models.Transfers.Transfer", b =>
+                {
+                    b.HasOne("EasyPay.Api.Models.Accounts.Account", "Accounts")
+                        .WithMany()
+                        .HasForeignKey("AccountsAccountId");
+
+                    b.Navigation("Accounts");
                 });
 
             modelBuilder.Entity("EasyPay.Api.Models.Clients.Client", b =>
