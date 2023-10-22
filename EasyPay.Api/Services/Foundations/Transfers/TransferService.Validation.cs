@@ -47,15 +47,15 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             Message = "Amount is required"
         };
 
-        private static void ValidateAccountNotFoundForTransfer(Account sourceAccount, Account recieverAccount)
+        private static void ValidateAccountNotFoundForTransfer(Account sourceAccount, string sourceAccountNumber, Account recieverAccount, string reveiverAccountNumber)
         {
             if (sourceAccount == null)
             {
-                throw new NotFoundAccountByAccountNumberException(sourceAccount.AccountNumber);
+                throw new NotFoundAccountByAccountNumberException(sourceAccountNumber);
             }
             if (recieverAccount == null)
             {
-                throw new NotFoundAccountByAccountNumberException(recieverAccount.AccountNumber);
+                throw new NotFoundAccountByAccountNumberException(reveiverAccountNumber);
             }
         }
 

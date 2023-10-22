@@ -3,31 +3,32 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System;
 using EasyPay.Api.Services.Foundations.Transfers;
+using EasyPay.Api.Models.Accounts.Exceptions;
 
 namespace EasyPay.Api.Controllers
 {
     public class TransferController : Controller
     {
-        private readonly TransferService transferService;
+        private readonly ITransferService transferService;
 
-        public TransferController(TransferService transferService)
+        public TransferController(ITransferService transferService)
         {
             this.transferService = transferService;
         }
 
         [HttpPost("transfer")]
-        public async Task<IActionResult> Transfer(string sourceAccountNumber, string receiverAccountNumber, decimal amount)
+        public async Task<ActionResult> Transfer(string sourceAccountNumber, string receiverAccountNumber, decimal amount)
         {
             try
             {
-                var updatedBalance = await transferService
+                var updatedBalance = await this.transferService
                     .MakeTransferAsync(sourceAccountNumber, receiverAccountNumber, amount);
 
                 return Ok(updatedBalance);
             }
-            catch (Exception ex)
+            catch (AccountValidationException accountValidationException)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(accountValidationException.InnerException.Message);
             }
         }
 
