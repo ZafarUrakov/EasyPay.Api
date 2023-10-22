@@ -6,6 +6,9 @@
 using EasyPay.Api.Brokers.DateTimes;
 using EasyPay.Api.Brokers.Loggings;
 using EasyPay.Api.Brokers.Storages;
+using EasyPay.Api.Models.Accounts;
+using EasyPay.Api.Models.Transfers;
+using System;
 using System.Threading.Tasks;
 
 namespace EasyPay.Api.Services.Foundations.Transfers
@@ -43,6 +46,7 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             recieverAccount.Balance += amount;
             await this.storageBroker.SaveChangesTransferAsync(recieverAccount);
 
+            await AddTransferAsync(receiverAccountNumber, sourceAccountNumber, amount);
 
             return sourceAccount.Balance;
         }
@@ -58,6 +62,8 @@ namespace EasyPay.Api.Services.Foundations.Transfers
 
             await this.storageBroker.SaveChangesTransferAsync(account);
 
+
+
             return account.Balance;
         }
 
@@ -69,6 +75,19 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             ValidateAccountNotFoundForTransfer(account);
 
             return account.Balance;
+        }
+
+        public async ValueTask<Transfer> AddTransferAsync(string receiverAccountNumber, string sourceAccountNumber, decimal amount)
+        {
+            Transfer transfer = new Transfer
+            {
+                TransferId = Guid.NewGuid(),
+                Amount = amount,
+                ReceiverAccountNumber = receiverAccountNumber,
+                SourceAccountNumber = sourceAccountNumber,
+            };
+
+            return await this.storageBroker.InsertTransferAsync(transfer);
         }
     }
 }

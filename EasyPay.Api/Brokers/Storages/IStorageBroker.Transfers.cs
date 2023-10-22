@@ -13,6 +13,6 @@ namespace EasyPay.Api.Brokers.Storages
     {
         ValueTask<Account> SelectAccountByAccountNumberAsync(string accountNumber);
         ValueTask SaveChangesTransferAsync(Account account);
-        ValueTask<Transfer> InsertTransfer(Transfer transfer);
+        ValueTask<Transfer> InsertTransferAsync(Transfer transfer);
     }
 }

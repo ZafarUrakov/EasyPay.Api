@@ -29,7 +29,7 @@ namespace EasyPay.Api.Brokers.Storages
             await broker.SaveChangesAsync();
         }
 
-        public async ValueTask<Transfer> InsertTransfer(Transfer transfer)
+        public async ValueTask<Transfer> InsertTransferAsync(Transfer transfer)
         {
             await this.Transfers.AddAsync(transfer);
             await this.SaveChangesAsync();
