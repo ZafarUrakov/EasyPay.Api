@@ -20,7 +20,7 @@ namespace EasyPay.Api.Brokers.Storages
             this.configuration = configuration;
             this.Database.Migrate();
         }
-
+        
         public async ValueTask<T> InsertAsync<T>(T @object)
         {
             var broker = new StorageBroker(this.configuration);

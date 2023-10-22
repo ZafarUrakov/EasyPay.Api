@@ -6,6 +6,7 @@
 using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Transfers;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace EasyPay.Api.Brokers.Storages
 {
@@ -13,19 +14,19 @@ namespace EasyPay.Api.Brokers.Storages
     {
         DbSet<Transfer> Transfers { get; set; }
 
-        //private readonly Account account;
-
-        //public StorageBroker(Account account)
-        //{
-        //    this.account = account;
-        //}
-
-        public decimal GetBalance()
+        public async ValueTask<Account> SelectAccountByAccountNumberAsync(string accountNumber)
         {
-            Transfer transfer = new Transfer();
-            Account account = transfer.Accounts;
+            Account account = await this.Accounts
+                .FirstOrDefaultAsync(a => a.AccountNumber == accountNumber);
 
-            return account.Balance;
+            return account;
+        }
+        public async ValueTask SaveChangesTransferAsync(Account account)
+        {
+            var broker = new StorageBroker(this.configuration);
+            broker.Entry(account).State = EntityState.Modified;
+
+            await broker.SaveChangesAsync();
         }
     }
 }
