@@ -75,6 +75,14 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             }
         }
 
+        private static void ValidateTransferAmount(decimal amount)
+        {
+            if (amount < 0)
+            {
+                throw new NegativeAmountException();
+            }
+        }
+
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
             var invalidClientException = new InvalidTransferException();
