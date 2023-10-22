@@ -6,12 +6,11 @@
 using EasyPay.Api.Brokers.DateTimes;
 using EasyPay.Api.Brokers.Loggings;
 using EasyPay.Api.Brokers.Storages;
-using EasyPay.Api.Models.Accounts.Exceptions;
 using System.Threading.Tasks;
 
 namespace EasyPay.Api.Services.Foundations.Transfers
 {
-    public class TransferService
+    public partial class TransferService
     {
         private readonly IStorageBroker storageBroker;
         private readonly IDateTimeBroker dateTimeBroker;
@@ -35,19 +34,9 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             var recieverAccount = await this.storageBroker
                 .SelectAccountByAccountNumberAsync(receiverAccountNumber);
 
-            if(sourceAccount == null) 
-            {
-                throw new NotFoundAccountException(sourceAccount.AccountId);
-            }
-            if (recieverAccount == null)
-            {
-                throw new NotFoundAccountException(recieverAccount.AccountId);
-            }
+            ValidateAccountNotFoundForTransfer(sourceAccount, recieverAccount);
 
-            if(sourceAccount.Balance < amount)
-            {
-                throw new System.Exception("Insufficient funds");
-            }
+            ValidateAccountInsufficientFunds(amount, sourceAccount);
 
             sourceAccount.Balance -= amount;
             await this.storageBroker.SaveChangesTransferAsync(sourceAccount);
@@ -63,10 +52,7 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             var account = await this.storageBroker
                 .SelectAccountByAccountNumberAsync(accountNumber);
 
-            if(account == null)
-            {
-                throw new NotFoundAccountException(account.AccountId);
-            }
+            ValidateAccountNotFoundForTransfer(account);
 
             account.Balance += amount;
 
@@ -80,10 +66,7 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             var account = await this.storageBroker
                 .SelectAccountByAccountNumberAsync(accountNumber);
 
-            if( account == null )
-            {
-                throw new NotFoundAccountException(account.AccountId);
-            }
+            ValidateAccountNotFoundForTransfer(account);
 
             return account.Balance;
         }
