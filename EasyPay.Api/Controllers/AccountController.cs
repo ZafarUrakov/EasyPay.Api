@@ -3,6 +3,7 @@
 // Manage Your Money Easy
 //===========================
 
+using System;
 using System.Threading.Tasks;
 using EasyPay.Api.Brokers.Storages;
 using EasyPay.Api.Models.Accounts;
@@ -31,10 +32,18 @@ namespace EasyPay.Api.Controllers
             return await this.accountService.AddAccountAsync(account);
         }
 
-        [HttpGet("Balance")]
-        public decimal GetAccountBalance()
+        [HttpGet("account/{accountId}/balance")]
+        public async ValueTask<IActionResult> GetAccountBalance(Guid accountId)
         {
-            return this.storageBroker.GetBalance();
+            var account = await accountService.RemoveAccountByIdAsync(accountId);
+
+            if (account == null)
+            {
+                return NotFound("Account not found");
+            }
+
+            decimal balance = account.Balance;
+            return Ok(balance);
         }
     }
 }
