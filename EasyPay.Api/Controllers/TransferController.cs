@@ -1,13 +1,13 @@
-﻿using EasyPay.Api.Models.Transfers;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System;
+﻿using EasyPay.Api.Models.Accounts.Exceptions;
+using EasyPay.Api.Models.Transfers.Exceptions;
 using EasyPay.Api.Services.Foundations.Transfers;
-using EasyPay.Api.Models.Accounts.Exceptions;
+using Microsoft.AspNetCore.Mvc;
+using RESTFulSense.Controllers;
+using System.Threading.Tasks;
 
 namespace EasyPay.Api.Controllers
 {
-    public class TransferController : Controller
+    public class TransferController : RESTFulController
     {
         private readonly ITransferService transferService;
 
@@ -16,7 +16,7 @@ namespace EasyPay.Api.Controllers
             this.transferService = transferService;
         }
 
-        [HttpPost("transfer")]
+        [HttpPost("Transfer")]
         public async Task<ActionResult> Transfer(string sourceAccountNumber, string receiverAccountNumber, decimal amount)
         {
             try
@@ -24,40 +24,93 @@ namespace EasyPay.Api.Controllers
                 var updatedBalance = await this.transferService
                     .MakeTransferAsync(sourceAccountNumber, receiverAccountNumber, amount);
 
-                return Ok(updatedBalance);
+                return Ok("Your balance: " + updatedBalance);
             }
             catch (AccountValidationException accountValidationException)
             {
-                return BadRequest(accountValidationException.InnerException.Message);
+                return BadRequest(accountValidationException.InnerException);
+            }
+            catch (AccountDependencyValidationException dependencyValidationException)
+            {
+                return Conflict(dependencyValidationException.InnerException);
+            }
+            catch (AccountDependencyException dependencyException)
+            {
+                return InternalServerError(dependencyException.InnerException);
+            }
+            catch (AccountServiceException serviceException)
+            {
+                return InternalServerError(serviceException.InnerException);
+            }
+            catch (TransferValidationException transferValidationException)
+            {
+                return BadRequest(transferValidationException.InnerException);
+            }
+            catch (TransferDependencyException dependencyException)
+            {
+                return InternalServerError(dependencyException.InnerException);
+            }
+            catch (TransferServiceException serviceException)
+            {
+                return InternalServerError(serviceException.InnerException);
             }
         }
 
-        [HttpPost("deposit")]
+        [HttpPost("Deposit")]
         public async ValueTask<IActionResult> Deposit(string accountNumber, decimal amount)
         {
             try
             {
                 var updatedBalance = await transferService.DepositAsync(accountNumber, amount);
 
-                return Ok(updatedBalance);
+                return Ok("Your balance: " + updatedBalance);
             }
-            catch (Exception ex)
+            catch (AccountValidationException accountValidationException)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(accountValidationException.InnerException);
+            }
+            catch (AccountDependencyValidationException dependencyValidationException)
+            {
+                return Conflict(dependencyValidationException.InnerException);
+            }
+            catch (AccountDependencyException dependencyException)
+            {
+                return InternalServerError(dependencyException.InnerException);
+            }
+            catch (AccountServiceException serviceException)
+            {
+                return InternalServerError(serviceException.InnerException);
+            }
+            catch (TransferValidationException transferValidationException)
+            {
+                return BadRequest(transferValidationException.InnerException);
             }
         }
 
-        [HttpGet("balance")]
+        [HttpGet("Balance")]
         public async Task<IActionResult> GetBalance(string accountNumber)
         {
             try
             {
                 var balance = await transferService.CheckBalanceAsync(accountNumber);
-                return Ok(balance);
+
+                return Ok("Your balance: " + balance);
             }
-            catch (Exception ex)
+            catch (AccountValidationException accountValidationException)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(accountValidationException.InnerException);
+            }
+            catch (AccountDependencyValidationException dependencyValidationException)
+            {
+                return Conflict(dependencyValidationException.InnerException);
+            }
+            catch (AccountDependencyException dependencyException)
+            {
+                return InternalServerError(dependencyException.InnerException);
+            }
+            catch (AccountServiceException serviceException)
+            {
+                return InternalServerError(serviceException.InnerException);
             }
         }
     }

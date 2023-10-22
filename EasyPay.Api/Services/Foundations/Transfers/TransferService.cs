@@ -6,7 +6,6 @@
 using EasyPay.Api.Brokers.DateTimes;
 using EasyPay.Api.Brokers.Loggings;
 using EasyPay.Api.Brokers.Storages;
-using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Transfers;
 using System;
 using System.Threading.Tasks;
@@ -31,7 +30,7 @@ namespace EasyPay.Api.Services.Foundations.Transfers
 
         public ValueTask<decimal> MakeTransferAsync(
             string sourceAccountNumber, string receiverAccountNumber, decimal amount) =>
-            TryCatch(async () =>
+        TryCatch(async () =>
         {
             var sourceAccount = await this.storageBroker
                 .SelectAccountByAccountNumberAsync(sourceAccountNumber);
@@ -39,7 +38,8 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             var recieverAccount = await this.storageBroker
                 .SelectAccountByAccountNumberAsync(receiverAccountNumber);
 
-            ValidateAccountNotFoundForTransfer(sourceAccount, sourceAccountNumber, recieverAccount, receiverAccountNumber);
+            ValidateAccountNotFoundForTransfer(sourceAccount, sourceAccountNumber,
+                recieverAccount, receiverAccountNumber);
 
             ValidateTransferAmount(amount);
 
@@ -57,12 +57,12 @@ namespace EasyPay.Api.Services.Foundations.Transfers
         });
 
         public ValueTask<decimal> DepositAsync(string accountNumber, decimal amount) =>
-            TryCatch(async () =>
+        TryCatch(async () =>
         {
             var account = await this.storageBroker
                 .SelectAccountByAccountNumberAsync(accountNumber);
 
-            ValidateAccountNotFoundForTransfer(account);
+            ValidateAccountNotFoundForTransfer(account, accountNumber);
 
             ValidateTransferAmount(amount);
 
@@ -74,18 +74,19 @@ namespace EasyPay.Api.Services.Foundations.Transfers
         });
 
         public ValueTask<decimal> CheckBalanceAsync(string accountNumber) =>
-            TryCatch(async () =>
+        TryCatch(async () =>
         {
             var account = await this.storageBroker
                 .SelectAccountByAccountNumberAsync(accountNumber);
 
-            ValidateAccountNotFoundForTransfer(account);
+            ValidateAccountNotFoundForTransfer(account, accountNumber);
 
             return account.Balance;
         });
 
-        public async ValueTask<Transfer> AddTransferAsync(
-            string receiverAccountNumber, string sourceAccountNumber, decimal amount)
+        public ValueTask<Transfer> AddTransferAsync(
+            string receiverAccountNumber, string sourceAccountNumber, decimal amount) =>
+        TryCatch(async () =>
         {
             Transfer transfer = new Transfer
             {
@@ -98,6 +99,6 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             ValidateTransferOnAdd(transfer);
 
             return await this.storageBroker.InsertTransferAsync(transfer);
-        }
+        });
     }
 }

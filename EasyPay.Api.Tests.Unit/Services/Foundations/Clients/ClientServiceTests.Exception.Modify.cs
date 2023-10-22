@@ -161,7 +161,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             Client someClient = randomClient;
             Guid clientId = someClient.ClientId;
             var serviceException = new Exception();
-            
+
             var failedClientServiceException =
                 new FailedClientServiceException(serviceException);
 

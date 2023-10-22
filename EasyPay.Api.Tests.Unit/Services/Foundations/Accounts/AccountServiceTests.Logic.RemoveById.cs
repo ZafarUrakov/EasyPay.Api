@@ -3,12 +3,12 @@
 // Manage Your Money Easy
 //===========================
 
-using System;
-using System.Threading.Tasks;
 using EasyPay.Api.Models.Accounts;
 using FluentAssertions;
 using Force.DeepCloner;
 using Moq;
+using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts

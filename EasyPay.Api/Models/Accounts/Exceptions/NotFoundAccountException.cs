@@ -11,7 +11,7 @@ namespace EasyPay.Api.Models.Accounts.Exceptions
     public class NotFoundAccountException : Xeption
     {
         public NotFoundAccountException(Guid accountId)
-            : base(message: $"Account is not found with id: {accountId}")
+            : base(message: $"Account is not found with id: {accountId}.")
         { }
     }
 }

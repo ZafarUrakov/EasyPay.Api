@@ -3,13 +3,13 @@
 // Manage Your Money Easy
 //===========================
 
-using System;
-using System.Threading.Tasks;
 using EasyPay.Api.Brokers.Storages;
 using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Services.Foundations.Accounts;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
+using System;
+using System.Threading.Tasks;
 
 namespace EasyPay.Api.Controllers
 {

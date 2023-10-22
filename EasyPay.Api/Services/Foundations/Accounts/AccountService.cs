@@ -7,11 +7,7 @@ using EasyPay.Api.Brokers.DateTimes;
 using EasyPay.Api.Brokers.Loggings;
 using EasyPay.Api.Brokers.Storages;
 using EasyPay.Api.Models.Accounts;
-using EasyPay.Api.Models.Accounts.Exceptions;
-using Microsoft.Data.SqlClient;
-using Microsoft.Identity.Client;
 using System;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 

@@ -14,6 +14,14 @@ namespace EasyPay.Api.Brokers.Storages
     {
         DbSet<Transfer> Transfers { get; set; }
 
+        public async ValueTask<Transfer> InsertTransferAsync(Transfer transfer)
+        {
+            await this.Transfers.AddAsync(transfer);
+            await this.SaveChangesAsync();
+
+            return transfer;
+        }
+
         public async ValueTask<Account> SelectAccountByAccountNumberAsync(string accountNumber)
         {
             Account account = await this.Accounts
@@ -21,6 +29,7 @@ namespace EasyPay.Api.Brokers.Storages
 
             return account;
         }
+
         public async ValueTask SaveChangesTransferAsync(Account account)
         {
             var broker = new StorageBroker(this.configuration);
@@ -29,12 +38,5 @@ namespace EasyPay.Api.Brokers.Storages
             await broker.SaveChangesAsync();
         }
 
-        public async ValueTask<Transfer> InsertTransferAsync(Transfer transfer)
-        {
-            await this.Transfers.AddAsync(transfer);
-            await this.SaveChangesAsync();
-
-            return transfer;
-        }
     }
 }

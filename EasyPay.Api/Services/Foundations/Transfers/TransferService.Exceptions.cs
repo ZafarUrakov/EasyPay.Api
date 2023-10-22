@@ -3,14 +3,13 @@
 // Manage Your Money Easy
 //===========================
 
-using System;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using EasyPay.Api.Brokers.Loggings;
 using EasyPay.Api.Models.Accounts.Exceptions;
+using EasyPay.Api.Models.Transfers;
 using EasyPay.Api.Models.Transfers.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 using Xeptions;
 
 namespace EasyPay.Api.Services.Foundations.Transfers
@@ -18,6 +17,7 @@ namespace EasyPay.Api.Services.Foundations.Transfers
     public partial class TransferService
     {
         private delegate ValueTask<decimal> ReturningAmountFunctions();
+        private delegate ValueTask<Transfer> ReturningTransferFunctions();
 
         private async ValueTask<decimal> TryCatch(ReturningAmountFunctions returningAmountFunctions)
         {
@@ -27,31 +27,31 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             }
             catch (NotFoundAccountByAccountNumberException notFoundAccountByAccountNumberException)
             {
-                throw CreateAndLogValidationException(notFoundAccountByAccountNumberException);
+                throw CreateAndLogAccountValidationException(notFoundAccountByAccountNumberException);
             }
-            catch(InsufficientFundsException insufficientFundsException)
+            catch (InsufficientFundsException insufficientFundsException)
             {
-                throw CreateAndLogValidationException(insufficientFundsException);
+                throw CreateAndLogTransferValidationException(insufficientFundsException);
             }
-            catch(NegativeAmountException negativeAmountException)
+            catch (NegativeAmountException negativeAmountException)
             {
-                throw CreateAndLogValidationException(negativeAmountException);
+                throw CreateAndLogTransferValidationException(negativeAmountException);
             }
-            catch(SqlException sqlException)
+            catch (SqlException sqlException)
             {
                 var failedStorageAccountException =
                     new FailedStorageAccountException(sqlException);
 
                 throw CreateAndLogCriticalDependencyException(failedStorageAccountException);
             }
-            catch(DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
             {
                 var lockedAccountException
                     = new LockedAccountException(dbUpdateConcurrencyException);
 
                 throw CreateAndLogDependencyValidationException(lockedAccountException);
             }
-            catch(DbUpdateException dbUpdateException)
+            catch (DbUpdateException dbUpdateException)
             {
                 var failedStorageAccountException
                     = new FailedStorageAccountException(dbUpdateException);
@@ -63,11 +63,48 @@ namespace EasyPay.Api.Services.Foundations.Transfers
                 var failedAccountServiceException
                     = new FailedAccountServiceException(exception);
 
-                throw CreateAndLogServiceException(failedAccountServiceException);
+                throw CreateAndLogAccountServiceException(failedAccountServiceException);
             }
         }
 
-        private AccountValidationException CreateAndLogValidationException(Xeption exception)
+        private async ValueTask<Transfer> TryCatch(ReturningTransferFunctions returningTransferFunctions)
+        {
+            try
+            {
+                return await returningTransferFunctions();
+            }
+            catch (SqlException sqlException)
+            {
+                FailedStorageTransferException failedStorageTransferException =
+                    new FailedStorageTransferException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedStorageTransferException);
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+                var failedStorageAccountException
+                    = new FailedStorageAccountException(dbUpdateException);
+
+                throw CreateAndLogDependencyException(failedStorageAccountException);
+            }
+            catch (Exception exception)
+            {
+                var failedAccountServiceException
+                    = new FailedAccountServiceException(exception);
+
+                throw CreateAndLogTransferServiceException(failedAccountServiceException);
+            }
+        }
+
+        private TransferValidationException CreateAndLogTransferValidationException(Xeption exception)
+        {
+            var transferValidationException = new TransferValidationException(exception);
+
+            this.loggingBroker.LogError(transferValidationException);
+
+            return transferValidationException;
+        }
+        private AccountValidationException CreateAndLogAccountValidationException(Xeption exception)
         {
             var accountValidationException = new AccountValidationException(exception);
 
@@ -106,7 +143,7 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             return accountDependencyException;
         }
 
-        private AccountServiceException CreateAndLogServiceException(Xeption exception)
+        private AccountServiceException CreateAndLogAccountServiceException(Xeption exception)
         {
             var accountServiceException =
                 new AccountServiceException(exception);
@@ -114,6 +151,15 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             this.loggingBroker.LogError(accountServiceException);
 
             return accountServiceException;
+        }
+        private TransferServiceException CreateAndLogTransferServiceException(Xeption exception)
+        {
+            var rtansferServiceException =
+                new TransferServiceException(exception);
+
+            this.loggingBroker.LogError(rtansferServiceException);
+
+            return rtansferServiceException;
         }
     }
 }

@@ -6,7 +6,6 @@
 using EasyPay.Api.Models.Accounts;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace EasyPay.Api.Models.Clients
 {
