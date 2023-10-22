@@ -10,7 +10,7 @@ namespace EasyPay.Api.Models.Accounts.Exceptions
     public class InvalidAccountException : Xeption
     {
         public InvalidAccountException()
-            : base(message: "Account is invalid")
+            : base(message: "Account is invalid.")
         { }
     }
 }

@@ -11,7 +11,7 @@ namespace EasyPay.Api.Models.Accounts.Exceptions
     public class LockedAccountException : Xeption
     {
         public LockedAccountException(Exception innerException)
-            : base(message: "Account is locked, try later",
+            : base(message: "Account is locked, try later.",
                   innerException)
         { }
     }

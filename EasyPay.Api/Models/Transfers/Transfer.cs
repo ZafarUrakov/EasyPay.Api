@@ -3,9 +3,8 @@
 // Manage Your Money Easy
 //===========================
 
-using System;
-using System.Drawing;
 using EasyPay.Api.Models.Accounts;
+using System;
 
 namespace EasyPay.Api.Models.Transfers
 {

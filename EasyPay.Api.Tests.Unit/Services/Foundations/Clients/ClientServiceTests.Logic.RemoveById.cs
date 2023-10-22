@@ -43,7 +43,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
             actualClient.Should().BeEquivalentTo(expectedClient);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectClientByIdAsync(inputClientId), Times.Once); 
+                broker.SelectClientByIdAsync(inputClientId), Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.DeleteClientAsync(expectedInputClient),

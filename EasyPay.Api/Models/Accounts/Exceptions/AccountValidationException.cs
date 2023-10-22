@@ -10,7 +10,7 @@ namespace EasyPay.Api.Models.Accounts.Exceptions
     public class AccountValidationException : Xeption
     {
         public AccountValidationException(Xeption innerException)
-            : base(message: "Account validation error occurred, fix the error and try again",
+            : base(message: "Account validation error occurred, fix the error and try again.",
                   innerException)
         { }
     }

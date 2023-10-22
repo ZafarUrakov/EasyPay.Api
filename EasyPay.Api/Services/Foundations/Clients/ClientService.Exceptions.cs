@@ -58,9 +58,9 @@ namespace EasyPay.Api.Services.Foundations.Clients
             }
             catch (DbUpdateException dbUpdateException)
             {
-                var failedServiceStrageException = new FailedClientStorageException(dbUpdateException); // error => name
+                var failedClientStrageException = new FailedClientStorageException(dbUpdateException);
 
-                throw CreateAndLogDependencyException(failedServiceStrageException);
+                throw CreateAndLogDependencyException(failedClientStrageException);
             }
             catch (Exception exception)
             {

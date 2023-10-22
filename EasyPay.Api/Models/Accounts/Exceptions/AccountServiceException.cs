@@ -10,7 +10,7 @@ namespace EasyPay.Api.Models.Accounts.Exceptions
     public class AccountServiceException : Xeption
     {
         public AccountServiceException(Xeption innerException)
-            : base(message: "Account service error occurred, contact support",
+            : base(message: "Account service error occurred, contact support.",
                   innerException)
         { }
     }

@@ -11,7 +11,7 @@ namespace EasyPay.Api.Models.Accounts.Exceptions
     public class FailedStorageAccountException : Xeption
     {
         public FailedStorageAccountException(Exception innerException)
-            : base(message: "Failed account storage error occurred, contact support",
+            : base(message: "Failed account storage error occurred, contact support.",
                   innerException)
         { }
     }

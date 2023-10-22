@@ -22,13 +22,6 @@ namespace EasyPay.Api.Services.Foundations.Transfers
                 (Rule: IsInvalid(transfer.Amount), Parameter: nameof(Transfer.Amount)));
         }
 
-        public void ValidateTransferOnAddByDeposit(Transfer transfer)
-        {
-            Validate(
-               (Rule: IsInvalid(transfer.SourceAccountNumber), Parameter: nameof(Transfer.SourceAccountNumber)),
-               (Rule: IsInvalid(transfer.Amount), Parameter: nameof(Transfer.Amount)));
-        }
-
         private static dynamic IsInvalid(Guid trnasferId) => new
         {
             Condition = trnasferId == default,
@@ -47,7 +40,8 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             Message = "Amount is required"
         };
 
-        private static void ValidateAccountNotFoundForTransfer(Account sourceAccount, string sourceAccountNumber, Account recieverAccount, string reveiverAccountNumber)
+        private static void ValidateAccountNotFoundForTransfer(Account sourceAccount,
+            string sourceAccountNumber, Account recieverAccount, string reveiverAccountNumber)
         {
             if (sourceAccount == null)
             {
@@ -59,11 +53,11 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             }
         }
 
-        private static void ValidateAccountNotFoundForTransfer(Account account)
+        private static void ValidateAccountNotFoundForTransfer(Account account, string accountNumber)
         {
             if (account == null)
             {
-                throw new NotFoundAccountByAccountNumberException(account.AccountNumber);
+                throw new NotFoundAccountByAccountNumberException(accountNumber);
             }
         }
 

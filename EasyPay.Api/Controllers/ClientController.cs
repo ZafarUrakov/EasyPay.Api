@@ -7,12 +7,10 @@ using EasyPay.Api.Models.Clients;
 using EasyPay.Api.Models.Clients.Exceptions;
 using EasyPay.Api.Services.Foundations.Clients;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Writers;
 using RESTFulSense.Controllers;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Xeptions;
 
 namespace EasyPay.Api.Controllers
 {
@@ -63,12 +61,12 @@ namespace EasyPay.Api.Controllers
                 return InternalServerError(dependencyException.InnerException);
             }
             catch (ClientValidationException clientValidationException)
-                when(clientValidationException.InnerException is InvalidClientException)
+                when (clientValidationException.InnerException is InvalidClientException)
             {
                 return BadRequest(clientValidationException.InnerException);
             }
             catch (ClientValidationException clientValidationException)
-                when(clientValidationException.InnerException is NotFoundClientException)
+                when (clientValidationException.InnerException is NotFoundClientException)
             {
                 return NotFound(clientValidationException.InnerException);
             }

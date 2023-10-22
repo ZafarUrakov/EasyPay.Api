@@ -10,7 +10,7 @@ namespace EasyPay.Api.Models.Accounts.Exceptions
     public class NullAccountException : Xeption
     {
         public NullAccountException()
-            : base(message: "Account is null")
+            : base(message: "Account is null.")
         { }
     }
 }
