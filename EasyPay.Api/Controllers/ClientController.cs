@@ -76,7 +76,7 @@ namespace EasyPay.Api.Controllers
             }
         }
 
-        [HttpGet("clientsAll")]
+        [HttpGet]
         public ActionResult<IQueryable<Client>> GetAllClients()
         {
             try
@@ -92,6 +92,39 @@ namespace EasyPay.Api.Controllers
             catch (ClientServiceException clientServiceException)
             {
                 return InternalServerError(clientServiceException.InnerException);
+            }
+        }
+
+        [HttpPut]
+        public async ValueTask<ActionResult<Client>> PutClientAsync(Client client)
+        {
+            try
+            {
+                Client modifyClient =
+                    await this.clientService.ModifyClientAsync(client);
+
+                return Ok(modifyClient);
+            }
+            catch (ClientValidationException clientValidationException)
+                when (clientValidationException.InnerException is NotFoundClientException)
+            {
+                return NotFound(clientValidationException.InnerException);
+            }
+            catch (ClientValidationException clientValidationException)
+            {
+                return BadRequest(clientValidationException.InnerException);
+            }
+            catch (ClientDependencyValidationException dependencyValidationException)
+            {
+                return Conflict(dependencyValidationException.InnerException);
+            }
+            catch (ClientDependencyException dependencyException)
+            {
+                return InternalServerError(dependencyException.InnerException);
+            }
+            catch (ClientServiceException serviceException)
+            {
+                return InternalServerError(serviceException.InnerException);
             }
         }
     }
