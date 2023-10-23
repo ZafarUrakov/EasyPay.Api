@@ -49,7 +49,7 @@ namespace EasyPay.Api.Controllers
             }
         }
 
-        [HttpGet("clientId")]
+        [HttpGet("ById")]
         public async ValueTask<ActionResult<Client>> GetClientByIdAsync(Guid clientId)
         {
             try
@@ -76,7 +76,7 @@ namespace EasyPay.Api.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("All")]
         public ActionResult<IQueryable<Client>> GetAllClients()
         {
             try
@@ -128,6 +128,7 @@ namespace EasyPay.Api.Controllers
             }
         }
 
+        [HttpDelete]
         public async ValueTask<ActionResult<Client>> DeleteAccountAsync(Guid clientId)
         {
             try

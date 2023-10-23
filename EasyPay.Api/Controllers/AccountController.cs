@@ -3,15 +3,15 @@
 // Manage Your Money Easy
 //===========================
 
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using EasyPay.Api.Brokers.Storages;
 using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Accounts.Exceptions;
 using EasyPay.Api.Services.Foundations.Accounts;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace EasyPay.Api.Controllers
 {
@@ -26,7 +26,7 @@ namespace EasyPay.Api.Controllers
             this.accountService = accountService;
         }
 
-        [HttpPost("add")]
+        [HttpPost]
         public async ValueTask<ActionResult<Account>> PostAccountAsync(Account account)
         {
             try
@@ -41,7 +41,7 @@ namespace EasyPay.Api.Controllers
                 return BadRequest(accountValidationException.InnerException);
             }
             catch (AccountDependencyValidationException accountDependencyValidationException)
-                when(accountDependencyValidationException.InnerException is AlreadyExistsAccountException)
+                when (accountDependencyValidationException.InnerException is AlreadyExistsAccountException)
             {
                 return Conflict(accountDependencyValidationException.InnerException);
             }
@@ -53,14 +53,14 @@ namespace EasyPay.Api.Controllers
             {
                 return InternalServerError(accountDependencyException.InnerException);
             }
-            catch(AccountServiceException accountServiceException)
+            catch (AccountServiceException accountServiceException)
             {
                 return InternalServerError(accountServiceException.InnerException);
             }
-            
+
         }
 
-        [HttpGet("getSingle")]
+        [HttpGet("ById")]
         public async ValueTask<ActionResult<Account>> GetAccountByIdAsync(Guid accountId)
         {
             try
@@ -70,7 +70,7 @@ namespace EasyPay.Api.Controllers
 
                 return Created(getAccount);
             }
-            catch(AccountDependencyException accountDependencyException)
+            catch (AccountDependencyException accountDependencyException)
             {
                 return InternalServerError(accountDependencyException.InnerException);
             }
@@ -89,7 +89,7 @@ namespace EasyPay.Api.Controllers
             }
         }
 
-        [HttpGet("getAll")]
+        [HttpGet("All")]
         public ActionResult<IQueryable<Account>> GetAllAccount()
         {
             try
@@ -103,7 +103,7 @@ namespace EasyPay.Api.Controllers
             {
                 return InternalServerError(accountDependencyException.InnerException);
             }
-            catch(AccountServiceException accountServiceException)
+            catch (AccountServiceException accountServiceException)
             {
                 return InternalServerError(accountServiceException.InnerException);
             }
@@ -124,19 +124,19 @@ namespace EasyPay.Api.Controllers
             {
                 return BadRequest(accountValidationException.InnerException);
             }
-            catch(AccountValidationException accountValidationException)
+            catch (AccountValidationException accountValidationException)
             {
                 return BadRequest(accountValidationException.InnerException);
             }
-            catch(AccountDependencyValidationException accountDependencyValidationException)
+            catch (AccountDependencyValidationException accountDependencyValidationException)
             {
                 return Conflict(accountDependencyValidationException.InnerException);
             }
-            catch(AccountDependencyException accountDependencyException)
+            catch (AccountDependencyException accountDependencyException)
             {
                 return InternalServerError(accountDependencyException.InnerException);
             }
-            catch(AccountServiceException accountServiceException)
+            catch (AccountServiceException accountServiceException)
             {
                 return InternalServerError(accountServiceException.InnerException);
             }
@@ -153,7 +153,7 @@ namespace EasyPay.Api.Controllers
                 return Created(deletedAccount);
             }
             catch (AccountDependencyValidationException accountDependencyValidationException)
-                when(accountDependencyValidationException.InnerException is LockedAccountException)
+                when (accountDependencyValidationException.InnerException is LockedAccountException)
             {
                 return Locked(accountDependencyValidationException.InnerException);
             }
@@ -161,8 +161,8 @@ namespace EasyPay.Api.Controllers
             {
                 return BadRequest(accountDependencyValidationException.InnerException);
             }
-            catch(AccountValidationException accountValidationException)
-                when(accountValidationException.InnerException is NotFoundAccountException)
+            catch (AccountValidationException accountValidationException)
+                when (accountValidationException.InnerException is NotFoundAccountException)
             {
                 return BadRequest(accountValidationException.InnerException);
             }
@@ -170,11 +170,11 @@ namespace EasyPay.Api.Controllers
             {
                 return BadRequest(accountValidationException.InnerException);
             }
-            catch(AccountDependencyException accountDependencyException)
+            catch (AccountDependencyException accountDependencyException)
             {
                 return InternalServerError(accountDependencyException.InnerException);
             }
-            catch(AccountServiceException accountServiceException)
+            catch (AccountServiceException accountServiceException)
             {
                 return InternalServerError(accountServiceException.InnerException);
             }
