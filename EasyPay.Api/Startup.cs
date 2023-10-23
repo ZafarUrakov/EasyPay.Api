@@ -34,7 +34,7 @@ namespace EasyPay.Api
             services.AddTransient<IDateTimeBroker, DateTimeBroker>();
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IClientService, ClientService>();
-            services.AddTransient<TransferService>();
+            services.AddTransient<ITransferService, TransferService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EasyPay.Api", Version = "v1" });

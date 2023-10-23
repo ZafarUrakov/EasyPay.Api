@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EasyPay.Api.Services.Foundations.Transfers
 {
-    public partial interface ITransferService
+    public interface ITransferService
     {
         ValueTask<decimal> MakeTransferAsync(
             string sourceAccountNumber, string receiverAccountNumber, decimal amount);
