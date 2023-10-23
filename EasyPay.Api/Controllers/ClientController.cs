@@ -127,5 +127,41 @@ namespace EasyPay.Api.Controllers
                 return InternalServerError(serviceException.InnerException);
             }
         }
+
+        public async ValueTask<ActionResult<Client>> DeleteAccountAsync(Guid clientId)
+        {
+            try
+            {
+                Client deleteClient = await this.clientService.RemoveClientByIdAsync(clientId);
+
+                return Ok(deleteClient);
+            }
+            catch (ClientValidationException clientValidationException)
+                when (clientValidationException.InnerException is NotFoundClientException)
+            {
+                return NotFound(clientValidationException.InnerException);
+            }
+            catch (ClientValidationException clientValidationException)
+            {
+                return BadRequest(clientValidationException.InnerException);
+            }
+            catch (ClientDependencyValidationException dependencyValidationException)
+                when (dependencyValidationException.InnerException is LockedClientException)
+            {
+                return Locked(dependencyValidationException.InnerException);
+            }
+            catch (ClientDependencyValidationException dependencyValidationException)
+            {
+                return BadRequest(dependencyValidationException.InnerException);
+            }
+            catch (ClientDependencyException dependencyException)
+            {
+                return InternalServerError(dependencyException.InnerException);
+            }
+            catch (ClientServiceException serviceException)
+            {
+                return InternalServerError(serviceException.InnerException);
+            }
+        }
     }
 }
