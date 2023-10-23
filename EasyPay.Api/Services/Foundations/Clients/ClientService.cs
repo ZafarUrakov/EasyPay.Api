@@ -37,9 +37,6 @@ namespace EasyPay.Api.Services.Foundations.Clients
             return await this.storageBroker.InsertClientAsync(client);
         });
 
-        public IQueryable<Client> RetrieveAllClients() =>
-            TryCatch(() => this.storageBroker.SelectAllClients());
-
         public ValueTask<Client> RetrieveClientByIdAsync(Guid clientId) =>
         TryCatch(async () =>
         {
@@ -52,18 +49,9 @@ namespace EasyPay.Api.Services.Foundations.Clients
             return maybeClient;
         });
 
-        public ValueTask<Client> RemoveClientByIdAsync(Guid clientId) =>
-        TryCatch(async () =>
-        {
-            ValidateClientId(clientId);
+        public IQueryable<Client> RetrieveAllClients() =>
+            TryCatch(() => this.storageBroker.SelectAllClients());
 
-            Client maybeclient =
-                await this.storageBroker.SelectClientByIdAsync(clientId);
-
-            ValidateStorageClient(maybeclient, clientId);
-
-            return await this.storageBroker.DeleteClientAsync(maybeclient);
-        });
 
         public ValueTask<Client> ModifyClientAsync(Client client) =>
         TryCatch(async () =>
@@ -77,5 +65,18 @@ namespace EasyPay.Api.Services.Foundations.Clients
 
             return await this.storageBroker.UpdateClientAsync(client);
         });
+
+        public ValueTask<Client> RemoveClientByIdAsync(Guid clientId) =>
+         TryCatch(async () =>
+         {
+             ValidateClientId(clientId);
+
+             Client maybeclient =
+                 await this.storageBroker.SelectClientByIdAsync(clientId);
+
+             ValidateStorageClient(maybeclient, clientId);
+
+             return await this.storageBroker.DeleteClientAsync(maybeclient);
+         });
     }
 }
