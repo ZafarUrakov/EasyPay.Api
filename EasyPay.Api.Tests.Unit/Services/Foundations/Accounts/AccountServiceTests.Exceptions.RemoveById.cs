@@ -23,7 +23,6 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
             //given
             Guid someAccountId = Guid.NewGuid();
             Guid inputAccountId = someAccountId;
-
             var dbUpdateConcurrencyException = new DbUpdateConcurrencyException();
 
             var lockedAccountException =
@@ -66,7 +65,6 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
             //given
             Guid someAccountId = Guid.NewGuid();
             Guid inputAccountId = someAccountId;
-
             SqlException sqlException = GetSqlError();
 
             var failedStorageAccountException =
@@ -107,8 +105,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
             //given
             Guid someAccountid = Guid.NewGuid();
             Guid inputAccountid = someAccountid;
-
-            Exception exception = new Exception();
+            var exception = new Exception();
 
             var failedAccountServiceException =
                 new FailedAccountServiceException(exception);

@@ -22,8 +22,8 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
         {
             // given
             Client someClient = CreateRandomClient();
-
             SqlException sqlException = GetSqlError();
+
             var failedClientStorageException =
                 new FailedClientStorageException(sqlException);
 
@@ -100,7 +100,6 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
         {
             // given
             Client someClient = CreateRandomClient();
-
             var serviceException = new Exception();
 
             var clientServiceException =

@@ -22,9 +22,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Clients
         {
             // given
             Guid someClientId = Guid.NewGuid();
-
-            var dbUpdateConcurrencyException =
-                new DbUpdateConcurrencyException();
+            var dbUpdateConcurrencyException = new DbUpdateConcurrencyException();
 
             var lockedClientException =
                 new LockedClientException(dbUpdateConcurrencyException);

@@ -19,7 +19,6 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
         {
             //given
             Account nullAccount = null;
-
             var nullAccountException = new NullAccountException();
 
             var expectedAccountValidationException =
