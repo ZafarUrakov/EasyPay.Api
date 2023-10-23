@@ -23,7 +23,6 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
         {
             //given
             Account someAccount = CreateRandomAccount();
-
             SqlException sqlException = GetSqlError();
 
             var failedAccountStorageException =
@@ -103,7 +102,6 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
         {
             // given
             Account someAccount = CreateRandomAccount();
-
             var serviceException = new Exception();
 
             var failedAccountServiceException =
