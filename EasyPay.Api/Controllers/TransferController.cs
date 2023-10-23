@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace EasyPay.Api.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class TransferController : RESTFulController
     {
         private readonly ITransferService transferService;
