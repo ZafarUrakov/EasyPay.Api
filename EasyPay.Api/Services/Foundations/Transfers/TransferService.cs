@@ -51,7 +51,7 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             await this.storageBroker.SaveChangesTransferAsync(sourceAccount);
             await this.storageBroker.SaveChangesTransferAsync(recieverAccount);
 
-            await AddTransferAsync(receiverAccountNumber, sourceAccountNumber, amount);
+            await AddTransferAsync(receiverAccountNumber, sourceAccountNumber, amount); // processing
 
             return sourceAccount.Balance;
         });
