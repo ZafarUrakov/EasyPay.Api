@@ -4,19 +4,19 @@
 //===========================
 
 using EasyPay.Api.Models.Accounts;
-using System;
 using System.Linq;
+using System;
 using System.Threading.Tasks;
 
-namespace EasyPay.Api.Services.Foundations.Accounts
+namespace EasyPay.Api.Services.Processings.Accounts
 {
-    public interface IAccountService
+    public interface IAccountProcessingService
     {
         /// <exception cref="Models.Accounts.Exceptions.AccountValidationException"></exception>
         /// <exception cref="Models.Accounts.Exceptions.AccountDependencyValidationException"></exception>
         /// <exception cref="Models.Accounts.Exceptions.AccountDependencyException"></exception>
         /// <exception cref="Models.Accounts.Exceptions.AccountServiceException"></exception>
-        ValueTask<Account> AddAccountAsync(Account account);
+        ValueTask<Account> RegisterAndSaveAccountAsync(Account account);
         /// <exception cref="Models.Accounts.Exceptions.AccountDependencyException"></exception>
         /// <exception cref="Models.Accounts.Exceptions.AccountServiceException"></exception>   
         IQueryable<Account> RetrieveAllAccounts();
@@ -32,7 +32,5 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         /// <exception cref="Models.Accounts.Exceptions.AccountDependencyException"></exception>
         /// <exception cref="Models.Accounts.Exceptions.AccountServiceException"></exception>
         ValueTask<Account> RemoveAccountByIdAsync(Guid accountId);
-        ValueTask<Account> RetrieveAccountByLogingAndAccountNumberAsync(string login, string accountNumber);
-        ValueTask<Account> RetrieveAccountByAccountNumberAsync(string accountNumber);
     }
 }

@@ -10,6 +10,9 @@ using EasyPay.Api.Services.Foundations.Accounts;
 using EasyPay.Api.Services.Foundations.Clients;
 using EasyPay.Api.Services.Foundations.Transfers;
 using EasyPay.Api.Services.Processings;
+using EasyPay.Api.Services.Processings.Accounts;
+using EasyPay.Api.Services.Processings.Clients;
+using EasyPay.Api.Services.Processings.Transfers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -43,8 +46,9 @@ namespace EasyPay.Api
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IClientService, ClientService>();
             services.AddTransient<ITransferService, TransferService>();
-            services.AddTransient<ClientProcessingService>();
-            services.AddTransient<AccountProcessingService>();
+            services.AddTransient<IClientProcessingService, ClientProcessingService>();
+            services.AddTransient<IAccountProcessingService, AccountProcessingService>();
+            services.AddTransient<ITransferProcessingService, TransferProcessingService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EasyPay.Api", Version = "v1" });

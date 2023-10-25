@@ -3,16 +3,15 @@
 // Manage Your Money Easy
 //===========================
 
-using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Accounts.Exceptions;
-using EasyPay.Api.Models.Clients;
-using EasyPay.Api.Models.Transfers;
+using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Transfers.Exceptions;
+using EasyPay.Api.Models.Transfers;
 using System;
 
-namespace EasyPay.Api.Services.Foundations.Transfers
+namespace EasyPay.Api.Services.Processings
 {
-    public partial class TransferService
+    public partial class TransferProcessingService
     {
         public void ValidateTransferOnAdd(Transfer transfer)
         {
@@ -77,9 +76,6 @@ namespace EasyPay.Api.Services.Foundations.Transfers
                 throw new NegativeAmountException();
             }
         }
-
-        private static void ValidateTransferId(Guid transferId) =>
-            Validate((Rule: IsInvalid(transferId), Parameter: nameof(Transfer.TransferId)));
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {

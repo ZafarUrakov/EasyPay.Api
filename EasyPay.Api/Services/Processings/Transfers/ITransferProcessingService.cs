@@ -4,16 +4,18 @@
 //===========================
 
 using EasyPay.Api.Models.Transfers;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
-namespace EasyPay.Api.Services.Foundations.Transfers
+namespace EasyPay.Api.Services.Processings.Transfers
 {
-    public interface ITransferService
+    public interface ITransferProcessingService
     {
-        ValueTask<Transfer> MakeAndInsertTransferAsync(
+        ValueTask<decimal> MakeAndInsertTransferAsync(
             string receiverAccountNumber, string sourceAccountNumber, decimal amount);
+        ValueTask<decimal> DepositAsync(string accountNumber, decimal amount);
+        ValueTask<decimal> CheckBalanceAsync(string accountNumber);
         IQueryable<Transfer> RetrieveAllTransfers();
         ValueTask<Transfer> RetrieveTransferByIdAsync(Guid TransferId);
         ValueTask<Transfer> ModifyTransferAsync(Transfer Transfer);

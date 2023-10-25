@@ -9,11 +9,12 @@ using EasyPay.Api.Services.Foundations.Accounts;
 using EasyPay.Api.Services.Foundations.Clients;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
-namespace EasyPay.Api.Services.Processings
+namespace EasyPay.Api.Services.Processings.Clients
 {
-    public class ClientProcessingService
+    public class ClientProcessingService : IClientProcessingService
     {
         private readonly IClientService clientService;
         private readonly IAccountService accountService;
@@ -39,12 +40,24 @@ namespace EasyPay.Api.Services.Processings
                 Client = client,
             };
 
-            await this.clientService.AddClientAsync(client);
+            await clientService.AddClientAsync(client);
 
-            await this.accountService.AddAccountAsync(account);
+            await accountService.AddAccountAsync(account);
 
             return client.AccountNumber;
         }
+
+        public async ValueTask<Client> RetrieveClientByIdAsync(Guid clientId) =>
+            await clientService.RetrieveClientByIdAsync(clientId);
+
+        public IQueryable<Client> RetrieveAllClients() =>
+            clientService.RetrieveAllClients();
+
+        public async ValueTask<Client> ModifyClientAsync(Client client) =>
+            await clientService.ModifyClientAsync(client);
+
+        public async ValueTask<Client> RemoveClientByIdAsync(Guid clientId) =>
+            await clientService.RemoveClientByIdAsync(clientId);
 
         public int RandomNumber()
         {

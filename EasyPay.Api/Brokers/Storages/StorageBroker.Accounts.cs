@@ -18,8 +18,12 @@ namespace EasyPay.Api.Brokers.Storages
         public async ValueTask<Account> InsertAccountAsync(Account account) =>
             await InsertAsync(account);
 
-        public IQueryable<Account> SelectAllAccounts() =>
-            SelectAll<Account>();
+        public IQueryable<Account> SelectAllAccounts()
+        {
+            var accounts = SelectAll<Account>().Include(a => a.Client);
+
+            return accounts;
+        }
 
         public async ValueTask<Account> SelectAccountByIdAsync(Guid accountId)
         {
@@ -33,6 +37,15 @@ namespace EasyPay.Api.Brokers.Storages
         public async ValueTask<Account> SelectAccountByLoginAndAccountNumber(string login, string accountNumber) =>
             await Accounts.Where(a => a.Login == login && a.AccountNumber == accountNumber)
                 .FirstOrDefaultAsync();
+
+        public async ValueTask<Account> SelectAccountByAccountNumberAsync(string accountNumber)
+        {
+            Account account = await this.Accounts
+                .FirstOrDefaultAsync(a => a.AccountNumber == accountNumber);
+
+            return account;
+        }
+
         public async ValueTask<Account> UpdateAccountAsync(Account account) =>
             await UpdateAsync(account);
 

@@ -37,6 +37,44 @@ namespace EasyPay.Api.Services.Foundations.Accounts
             return await this.storageBroker.InsertAccountAsync(account);
         });
 
+
+        public ValueTask<Account> RetrieveAccountByIdAsync(Guid accountId) =>
+        TryCatch(async () =>
+        {
+            ValidateAccountId(accountId);
+
+            Account maybeAccount = await this.storageBroker.SelectAccountByIdAsync(accountId);
+
+            ValidateStorageAccount(maybeAccount, accountId);
+
+            return maybeAccount;
+        });
+
+        public IQueryable<Account> RetrieveAllAccounts() =>
+             TryCatch(() => this.storageBroker.SelectAllAccounts());
+
+        public ValueTask<Account> RetrieveAccountByAccountNumberAsync(string accountNumber) =>
+        TryCatch(async () =>
+        {
+            Account maybeAccount = await this.storageBroker.SelectAccountByAccountNumberAsync(accountNumber);
+
+            return maybeAccount;
+        });
+
+        public async ValueTask<Account> RetrieveAccountByLogingAndAccountNumberAsync(
+            string login, string accountNumber)
+        {
+            var maybeAccount = await this.storageBroker
+                .SelectAccountByLoginAndAccountNumber(login, accountNumber);
+
+            if (maybeAccount is null)
+            {
+                throw new Exception("Not found account with login and id");
+            }
+
+            return maybeAccount;
+        }
+
         public ValueTask<Account> ModifyAccountAsync(Account account) =>
         TryCatch(async () =>
         {
@@ -62,32 +100,5 @@ namespace EasyPay.Api.Services.Foundations.Accounts
 
             return await this.storageBroker.DeleteAccountAsync(maybeAccount);
         });
-
-        public ValueTask<Account> RetrieveAccountByIdAsync(Guid accountId) =>
-        TryCatch(async () =>
-        {
-            ValidateAccountId(accountId);
-
-            Account maybeAccount = await this.storageBroker.SelectAccountByIdAsync(accountId);
-
-            ValidateStorageAccount(maybeAccount, accountId);
-
-            return maybeAccount;
-        });
-
-        public IQueryable<Account> RetrieveAllAccounts() =>
-             TryCatch(() => this.storageBroker.SelectAllAccounts());
-
-        public async ValueTask<Account> RetrieveAccountByLogingAndAccountNumberAsync(string login, string accountNumber)
-        {
-            var maybeAccount = await this.storageBroker.SelectAccountByLoginAndAccountNumber(login, accountNumber);
-
-            if (maybeAccount is null)
-            {
-                throw new Exception("Not found account with login and id");
-            }
-
-            return maybeAccount;
-        }
     }
 }

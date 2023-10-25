@@ -6,7 +6,7 @@
 using EasyPay.Api.Models.Clients;
 using EasyPay.Api.Models.Clients.Exceptions;
 using EasyPay.Api.Services.Foundations.Clients;
-using EasyPay.Api.Services.Processings;
+using EasyPay.Api.Services.Processings.Clients;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 using System;
@@ -19,12 +19,10 @@ namespace EasyPay.Api.Controllers
     [Route("api/[controller]")]
     public class ClientController : RESTFulController
     {
-        private readonly IClientService clientService;
-        private readonly ClientProcessingService clientProcessingService;
+        private readonly IClientProcessingService clientProcessingService;
 
-        public ClientController(IClientService clientService, ClientProcessingService clientProcessingService)
+        public ClientController(IClientProcessingService clientProcessingService)
         {
-            this.clientService = clientService;
             this.clientProcessingService = clientProcessingService;
         }
 
@@ -61,7 +59,7 @@ namespace EasyPay.Api.Controllers
         {
             try
             {
-                return await this.clientService.RetrieveClientByIdAsync(clientId);
+                return await this.clientProcessingService.RetrieveClientByIdAsync(clientId);
             }
             catch (ClientDependencyException dependencyException)
             {
@@ -88,7 +86,7 @@ namespace EasyPay.Api.Controllers
         {
             try
             {
-                IQueryable<Client> allClients = this.clientService.RetrieveAllClients();
+                IQueryable<Client> allClients = this.clientProcessingService.RetrieveAllClients();
 
                 return Ok(allClients);
             }
@@ -108,7 +106,7 @@ namespace EasyPay.Api.Controllers
             try
             {
                 Client modifyClient =
-                    await this.clientService.ModifyClientAsync(client);
+                    await this.clientProcessingService.ModifyClientAsync(client);
 
                 return Ok(modifyClient);
             }
@@ -140,7 +138,7 @@ namespace EasyPay.Api.Controllers
         {
             try
             {
-                Client deleteClient = await this.clientService.RemoveClientByIdAsync(clientId);
+                Client deleteClient = await this.clientProcessingService.RemoveClientByIdAsync(clientId);
 
                 return Ok(deleteClient);
             }

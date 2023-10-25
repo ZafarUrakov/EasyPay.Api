@@ -4,24 +4,20 @@
 //===========================
 
 using EasyPay.Api.Models.Accounts.Exceptions;
-using EasyPay.Api.Models.Clients;
-using EasyPay.Api.Models.Clients.Exceptions;
-using EasyPay.Api.Models.Transfers;
 using EasyPay.Api.Models.Transfers.Exceptions;
+using EasyPay.Api.Models.Transfers;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
+using System;
 using Xeptions;
 
-namespace EasyPay.Api.Services.Foundations.Transfers
+namespace EasyPay.Api.Services.Processings
 {
-    public partial class TransferService
+    public partial class TransferProcessingService
     {
         private delegate ValueTask<decimal> ReturningAmountFunctions();
         private delegate ValueTask<Transfer> ReturningTransferFunctions();
-        private delegate IQueryable<Transfer> ReturningTransfersFunction();
 
         private async ValueTask<decimal> TryCatch(ReturningAmountFunctions returningAmountFunctions)
         {
@@ -97,22 +93,6 @@ namespace EasyPay.Api.Services.Foundations.Transfers
                     = new FailedAccountServiceException(exception);
 
                 throw CreateAndLogTransferServiceException(failedAccountServiceException);
-            }
-        }
-
-        private IQueryable<Transfer> TryCatch(ReturningTransfersFunction returningTransfersFunction)
-        {
-            try
-            {
-                return returningTransfersFunction();
-            }
-            catch (SqlException sqlException)
-            {
-                throw new Exception("sqlexc");
-            }
-            catch (Exception exception)
-            {
-                throw new Exception("serverException");
             }
         }
 

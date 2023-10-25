@@ -6,7 +6,7 @@
 using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Accounts.Exceptions;
 using EasyPay.Api.Services.Foundations.Accounts;
-using EasyPay.Api.Services.Processings;
+using EasyPay.Api.Services.Processings.Accounts;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 using System;
@@ -19,13 +19,10 @@ namespace EasyPay.Api.Controllers
     [Route("api/[controller]")]
     public class AccountController : RESTFulController
     {
-        private readonly IAccountService accountService;
-        private readonly AccountProcessingService accountProcessingService;
+        private readonly IAccountProcessingService accountProcessingService;
 
-        public AccountController(
-            IAccountService accountService, AccountProcessingService accountProcessingService)
+        public AccountController(IAccountProcessingService accountProcessingService)
         {
-            this.accountService = accountService;
             this.accountProcessingService = accountProcessingService;
         }
 
@@ -69,7 +66,7 @@ namespace EasyPay.Api.Controllers
             try
             {
                 Account getAccount =
-                    await this.accountService.RetrieveAccountByIdAsync(accountId);
+                    await this.accountProcessingService.RetrieveAccountByIdAsync(accountId);
 
                 return Created(getAccount);
             }
@@ -98,7 +95,7 @@ namespace EasyPay.Api.Controllers
             try
             {
                 IQueryable<Account> accounts
-                    = this.accountService.RetrieveAllAccounts();
+                    = this.accountProcessingService.RetrieveAllAccounts();
 
                 return Created(accounts);
             }
@@ -118,7 +115,7 @@ namespace EasyPay.Api.Controllers
             try
             {
                 Account modifiedAccount =
-                await this.accountService.ModifyAccountAsync(account);
+                await this.accountProcessingService.ModifyAccountAsync(account);
 
                 return Created(modifiedAccount);
             }
@@ -151,7 +148,7 @@ namespace EasyPay.Api.Controllers
             try
             {
                 Account deletedAccount =
-                    await this.accountService.RemoveAccountByIdAsync(accountId);
+                    await this.accountProcessingService.RemoveAccountByIdAsync(accountId);
 
                 return Created(deletedAccount);
             }

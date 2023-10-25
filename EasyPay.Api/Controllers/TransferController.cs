@@ -1,6 +1,8 @@
 ﻿using EasyPay.Api.Models.Accounts.Exceptions;
 using EasyPay.Api.Models.Transfers.Exceptions;
 using EasyPay.Api.Services.Foundations.Transfers;
+using EasyPay.Api.Services.Processings.Transfers;
+using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 using System.Threading.Tasks;
@@ -11,11 +13,12 @@ namespace EasyPay.Api.Controllers
     [Route("api/[controller]")]
     public class TransferController : RESTFulController
     {
-        private readonly ITransferService transferService;
 
-        public TransferController(ITransferService transferService)
+        private readonly ITransferProcessingService transferProcessingService;
+
+        public TransferController(ITransferProcessingService transferProcessingService)
         {
-            this.transferService = transferService;
+            this.transferProcessingService = transferProcessingService;
         }
 
         [HttpPost("Transfer")]
@@ -23,8 +26,8 @@ namespace EasyPay.Api.Controllers
         {
             try
             {
-                var updatedBalance = await this.transferService
-                    .MakeTransferAsync(sourceAccountNumber, receiverAccountNumber, amount);
+                var updatedBalance = await this.transferProcessingService
+                    .MakeAndInsertTransferAsync(sourceAccountNumber, receiverAccountNumber, amount);
 
                 return Ok("Your balance: " + updatedBalance);
             }
@@ -63,7 +66,7 @@ namespace EasyPay.Api.Controllers
         {
             try
             {
-                var updatedBalance = await transferService.DepositAsync(accountNumber, amount);
+                var updatedBalance = await transferProcessingService.DepositAsync(accountNumber, amount);
 
                 return Ok("Your balance: " + updatedBalance);
             }
@@ -94,7 +97,7 @@ namespace EasyPay.Api.Controllers
         {
             try
             {
-                var balance = await transferService.CheckBalanceAsync(accountNumber);
+                var balance = await transferProcessingService.CheckBalanceAsync(accountNumber);
 
                 return Ok("Your balance: " + balance);
             }

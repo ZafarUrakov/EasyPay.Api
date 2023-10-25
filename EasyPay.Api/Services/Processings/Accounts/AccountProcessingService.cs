@@ -5,11 +5,13 @@
 
 using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Services.Foundations.Accounts;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
-namespace EasyPay.Api.Services.Processings
+namespace EasyPay.Api.Services.Processings.Accounts
 {
-    public class AccountProcessingService
+    public class AccountProcessingService : IAccountProcessingService
     {
         private readonly IAccountService accountService;
 
@@ -20,7 +22,7 @@ namespace EasyPay.Api.Services.Processings
 
         public async ValueTask<Account> RegisterAndSaveAccountAsync(Account account)
         {
-            var maybeAccount = await this.accountService
+            var maybeAccount = await accountService
                 .RetrieveAccountByLogingAndAccountNumberAsync(account.Login, account.AccountNumber);
 
             Account fullAccount = new Account
@@ -33,9 +35,21 @@ namespace EasyPay.Api.Services.Processings
                 ClientId = maybeAccount.ClientId
             };
 
-            await this.accountService.ModifyAccountAsync(fullAccount);
+            await accountService.ModifyAccountAsync(fullAccount);
 
             return fullAccount;
         }
+
+        public async ValueTask<Account> RetrieveAccountByIdAsync(Guid accountId) =>
+            await accountService.RetrieveAccountByIdAsync(accountId);
+
+        public IQueryable<Account> RetrieveAllAccounts() =>
+            accountService.RetrieveAllAccounts();
+
+        public async ValueTask<Account> ModifyAccountAsync(Account account) =>
+            await accountService.ModifyAccountAsync(account);
+
+        public async ValueTask<Account> RemoveAccountByIdAsync(Guid accountId) =>
+            await accountService.RemoveAccountByIdAsync(accountId);
     }
 }
