@@ -19,7 +19,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
                 (Rule: IsInvalid(account.AccountId), Parameter: nameof(Account.AccountId)),
                 (Rule: IsInvalid(account.AccountNumber), Parameter: nameof(Account.AccountNumber)),
                 (Rule: IsInvalid(account.Login), Parameter: nameof(Account.Login)),
-                (Rule: IsInvalid(account.Password), Parameter: nameof(Account.Password)),
+                //(Rule: IsInvalid(account.Password), Parameter: nameof(Account.Password)),
                 (Rule: IsInvalid(account.ClientId), Parameter: nameof(Account.ClientId)));
         }
 

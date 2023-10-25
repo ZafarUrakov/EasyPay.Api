@@ -20,7 +20,6 @@ namespace EasyPay.Api.Models.Accounts
         public decimal Balance { get; set; }
         [JsonIgnore]
         public Guid ClientId { get; set; }
-        [JsonIgnore]
         public Client Client { get; set; }
     }
 }

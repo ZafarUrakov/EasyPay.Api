@@ -32,5 +32,6 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         /// <exception cref="Models.Accounts.Exceptions.AccountDependencyException"></exception>
         /// <exception cref="Models.Accounts.Exceptions.AccountServiceException"></exception>
         ValueTask<Account> ModifyAccountAsync(Account account);
+        ValueTask<Account> RetrieveAccountByLogingAndAccountNumberAsync(string login, string accountNumber);
     }
 }

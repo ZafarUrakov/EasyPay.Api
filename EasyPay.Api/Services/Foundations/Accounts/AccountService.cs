@@ -77,5 +77,17 @@ namespace EasyPay.Api.Services.Foundations.Accounts
 
         public IQueryable<Account> RetrieveAllAccounts() =>
              TryCatch(() => this.storageBroker.SelectAllAccounts());
+
+        public async ValueTask<Account> RetrieveAccountByLogingAndAccountNumberAsync(string login, string accountNumber)
+        {
+            var maybeAccount = await this.storageBroker.SelectAccountByLoginAndAccountNumber(login, accountNumber);
+
+            if (maybeAccount is null)
+            {
+                throw new Exception("Not found account with login and id");
+            }
+
+            return maybeAccount;
+        }
     }
 }
