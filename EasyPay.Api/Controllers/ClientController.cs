@@ -6,6 +6,7 @@
 using EasyPay.Api.Models.Clients;
 using EasyPay.Api.Models.Clients.Exceptions;
 using EasyPay.Api.Services.Foundations.Clients;
+using EasyPay.Api.Services.Processings;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 using System;
@@ -19,16 +20,22 @@ namespace EasyPay.Api.Controllers
     public class ClientController : RESTFulController
     {
         private readonly IClientService clientService;
+        private readonly ClientProcessingService clientProcessingService;
 
-        public ClientController(IClientService clientService) =>
+        public ClientController(IClientService clientService, ClientProcessingService clientProcessingService)
+        {
             this.clientService = clientService;
+            this.clientProcessingService = clientProcessingService;
+        }
 
         [HttpPost]
-        public async ValueTask<ActionResult<Client>> PostClientAsync(Client client)
+        public async ValueTask<ActionResult<string>> PostClientAsync(Client client)
         {
             try
             {
-                return await this.clientService.AddClientAsync(client);
+                var accountNumber = await this.clientProcessingService.RegisterClientWithAccountAsync(client);
+
+                return Ok("Your accountNumber: " + accountNumber);
             }
             catch (ClientValidationException clientValidationException)
             {
