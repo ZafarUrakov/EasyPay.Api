@@ -8,10 +8,12 @@ using EasyPay.Api.Brokers.Loggings;
 using EasyPay.Api.Brokers.Storages;
 using EasyPay.Api.Services.Foundations.Accounts;
 using EasyPay.Api.Services.Foundations.Clients;
+using EasyPay.Api.Services.Foundations.ImagaMetadatas;
 using EasyPay.Api.Services.Foundations.Transfers;
 using EasyPay.Api.Services.Processings;
 using EasyPay.Api.Services.Processings.Accounts;
 using EasyPay.Api.Services.Processings.Clients;
+using EasyPay.Api.Services.Processings.ImageMetadatas;
 using EasyPay.Api.Services.Processings.Transfers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -46,9 +48,11 @@ namespace EasyPay.Api
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IClientService, ClientService>();
             services.AddTransient<ITransferService, TransferService>();
+            services.AddTransient<IImageMetadataService, ImageMetadataService>();
             services.AddTransient<IClientProcessingService, ClientProcessingService>();
             services.AddTransient<IAccountProcessingService, AccountProcessingService>();
             services.AddTransient<ITransferProcessingService, TransferProcessingService>();
+            services.AddTransient<IImagaMetadataProcessingService, ImagaMetadataProcessingService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EasyPay.Api", Version = "v1" });
