@@ -13,10 +13,10 @@ namespace EasyPay.Api.Services.Foundations.ImagaMetadatas
 {
     public interface IImageMetadataService
     {
-        ValueTask<ImageMetadata> AddClientAsync(ImageMetadata imageMetadata);
-        IQueryable<ImageMetadata> RetrieveAllClients();
-        ValueTask<ImageMetadata> RetrieveClientByIdAsync(Guid clientId);
-        ValueTask<ImageMetadata> RemoveClientByIdAsync(Guid locationId);
-        ValueTask<ImageMetadata> ModifyClientAsync(ImageMetadata imageMetadata);
+        ValueTask<ImageMetadata> AddImageMetadataAsync(ImageMetadata imageMetadata);
+        IQueryable<ImageMetadata> RetrieveAllImageMetadatas();
+        ValueTask<ImageMetadata> RetrieveImageMetadataByIdAsync(Guid imageMetadataId);
+        ValueTask<ImageMetadata> RemovedImageMetadataByIdAsync(Guid locationId);
+        ValueTask<ImageMetadata> ModifydImageMetadataAsync(ImageMetadata imageMetadata);
     }
 }
