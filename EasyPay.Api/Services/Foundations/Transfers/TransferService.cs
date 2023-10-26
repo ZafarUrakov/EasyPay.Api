@@ -6,8 +6,11 @@
 using EasyPay.Api.Brokers.DateTimes;
 using EasyPay.Api.Brokers.Loggings;
 using EasyPay.Api.Brokers.Storages;
+using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Transfers;
 using System;
+using System.Linq;
+using System.Security.AccessControl;
 using System.Threading.Tasks;
 
 namespace EasyPay.Api.Services.Foundations.Transfers
@@ -28,77 +31,69 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<decimal> MakeTransferAsync(
+        public ValueTask<Transfer> MakeAndAddTransferAsync(Account account, 
             string sourceAccountNumber, string receiverAccountNumber, decimal amount) =>
         TryCatch(async () =>
         {
-            var sourceAccount = await this.storageBroker
-                .SelectAccountByAccountNumberAsync(sourceAccountNumber);
-
-            var recieverAccount = await this.storageBroker
-                .SelectAccountByAccountNumberAsync(receiverAccountNumber);
-
-            ValidateAccountNotFoundForTransfer(sourceAccount, sourceAccountNumber,
-                recieverAccount, receiverAccountNumber);
-
-            ValidateTransferAmount(amount);
-
-            ValidateAccountInsufficientFunds(amount, sourceAccount);
-
-            sourceAccount.Balance -= amount;
-            recieverAccount.Balance += amount;
-
-            await this.storageBroker.SaveChangesTransferAsync(sourceAccount);
-            await this.storageBroker.SaveChangesTransferAsync(recieverAccount);
-
-            await AddTransferAsync(receiverAccountNumber, sourceAccountNumber, amount);
-
-            return sourceAccount.Balance;
-        });
-
-        public ValueTask<decimal> DepositAsync(string accountNumber, decimal amount) =>
-        TryCatch(async () =>
-        {
-            var account = await this.storageBroker
-                .SelectAccountByAccountNumberAsync(accountNumber);
-
-            ValidateAccountNotFoundForTransfer(account, accountNumber);
-
-            ValidateTransferAmount(amount);
-
-            account.Balance += amount;
-
-            await this.storageBroker.SaveChangesTransferAsync(account);
-
-            return account.Balance;
-        });
-
-        public ValueTask<decimal> CheckBalanceAsync(string accountNumber) =>
-        TryCatch(async () =>
-        {
-            var account = await this.storageBroker
-                .SelectAccountByAccountNumberAsync(accountNumber);
-
-            ValidateAccountNotFoundForTransfer(account, accountNumber);
-
-            return account.Balance;
-        });
-
-        public ValueTask<Transfer> AddTransferAsync(
-            string receiverAccountNumber, string sourceAccountNumber, decimal amount) =>
-        TryCatch(async () =>
-        {
-            Transfer transfer = new Transfer
-            {
-                TransferId = Guid.NewGuid(),
-                Amount = amount,
-                ReceiverAccountNumber = receiverAccountNumber,
-                SourceAccountNumber = sourceAccountNumber,
-            };
+            var transfer = CreateTransfer(account, sourceAccountNumber, receiverAccountNumber, amount);
 
             ValidateTransferOnAdd(transfer);
 
             return await this.storageBroker.InsertTransferAsync(transfer);
         });
+
+        public ValueTask<Transfer> RetrieveTransferByIdAsync(Guid transferId) =>
+        TryCatch(async () =>
+        {
+            ValidateTransferId(transferId);
+
+            Transfer maybeTransfer = await this.storageBroker.SelectTransferByIdAsync(transferId);
+
+            ValidateStorageTransfer(maybeTransfer, transferId);
+
+            return maybeTransfer;
+        });
+
+        public IQueryable<Transfer> RetrieveAllTransfers() =>
+            TryCatch(() => this.storageBroker.SelectAllTransfers());
+
+        public ValueTask<Transfer> ModifyTransferAsync(Transfer transfer) =>
+        TryCatch(async () =>
+        {
+            ValidateTransferOnModify(transfer);
+
+            Transfer maybeTransfer =
+                await this.storageBroker.SelectTransferByIdAsync(transfer.TransferId);
+
+            ValidateAndAgainstStorageTransferOnModify(transfer, maybeTransfer);
+
+            return await this.storageBroker.UpdateTransferAsync(transfer);
+        });
+
+        public ValueTask<Transfer> RemoveTransferByIdAsync(Guid transferId) =>
+         TryCatch(async () =>
+         {
+             ValidateTransferId(transferId);
+
+             Transfer maybeTransfer =
+                 await this.storageBroker.SelectTransferByIdAsync(transferId);
+
+             ValidateStorageTransfer(maybeTransfer, transferId);
+
+             return await this.storageBroker.DeleteTransferAsync(maybeTransfer);
+         });
+
+        private static Transfer CreateTransfer(Account account, string sourceAccountNumber,
+            string receiverAccountNumber, decimal amount)
+        {
+            return new Transfer
+            {
+                TransferId = Guid.NewGuid(),
+                Account = account,
+                Amount = amount,
+                SourceAccountNumber = sourceAccountNumber,
+                ReceiverAccountNumber = receiverAccountNumber,
+            };
+        }
     }
 }

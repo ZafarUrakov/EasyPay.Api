@@ -3,6 +3,7 @@
 // Manage Your Money Easy
 //===========================
 
+using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Clients;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,11 +19,22 @@ namespace EasyPay.Api.Brokers.Storages
         public async ValueTask<Client> InsertClientAsync(Client client) =>
             await InsertAsync(client);
 
-        public IQueryable<Client> SelectAllClients() =>
-            SelectAll<Client>();
+        public IQueryable<Client> SelectAllClients()
+        {
+            var clients = SelectAll<Client>().Include(a => a.Accounts);
 
-        public async ValueTask<Client> SelectClientByIdAsync(Guid clientId) =>
-            await SelectAsync<Client>(clientId);
+            return clients;
+        }
+
+        public async ValueTask<Client> SelectClientByIdAsync(Guid clientId)
+        {
+            var clientWithAccounts = Clients
+                .Include(c => c.Accounts)
+                .FirstOrDefault(c => c.ClientId == clientId);
+
+            return await ValueTask.FromResult(clientWithAccounts);
+        }
+
 
         public async ValueTask<Client> UpdateClientAsync(Client client) =>
             await UpdateAsync(client);

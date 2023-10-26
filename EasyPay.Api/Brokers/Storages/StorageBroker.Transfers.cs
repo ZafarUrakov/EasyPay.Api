@@ -3,10 +3,13 @@
 // Manage Your Money Easy
 //===========================
 
-using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Transfers;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System;
 using System.Threading.Tasks;
+using EasyPay.Api.Models.Accounts;
+using EasyPay.Api.Models.Clients;
 
 namespace EasyPay.Api.Brokers.Storages
 {
@@ -14,21 +17,31 @@ namespace EasyPay.Api.Brokers.Storages
     {
         DbSet<Transfer> Transfers { get; set; }
 
-        public async ValueTask<Transfer> InsertTransferAsync(Transfer transfer)
-        {
-            await this.Transfers.AddAsync(transfer);
-            await this.SaveChangesAsync();
+        public async ValueTask<Transfer> InsertTransferAsync(Transfer transfer) =>
+            await InsertAsync(transfer);
 
-            return transfer;
+        public IQueryable<Transfer> SelectAllTransfers()
+        {
+            var transfers = SelectAll<Transfer>().Include(a => a.Account);
+
+            return transfers;
         }
 
-        public async ValueTask<Account> SelectAccountByAccountNumberAsync(string accountNumber)
+        public async ValueTask<Transfer> SelectTransferByIdAsync(Guid transferId)
         {
-            Account account = await this.Accounts
-                .FirstOrDefaultAsync(a => a.AccountNumber == accountNumber);
+            var transferWithTransfers = Transfers
+            .Include(t => t.Account)
+                .FirstOrDefault(t => t.TransferId == transferId);
 
-            return account;
+            return await ValueTask.FromResult(transferWithTransfers);
         }
+
+        public async ValueTask<Transfer> UpdateTransferAsync(Transfer transfer) =>
+            await UpdateAsync(transfer);
+
+        public async ValueTask<Transfer> DeleteTransferAsync(Transfer transfer) =>
+             await DeleteAsync(transfer);
+
 
         public async ValueTask SaveChangesTransferAsync(Account account)
         {
@@ -37,6 +50,5 @@ namespace EasyPay.Api.Brokers.Storages
 
             await broker.SaveChangesAsync();
         }
-
     }
 }

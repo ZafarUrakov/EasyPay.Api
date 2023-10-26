@@ -4,6 +4,7 @@ using EasyPay.Api.Brokers.Storages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EasyPay.Api.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    partial class StorageBrokerModelSnapshot : ModelSnapshot
+    [Migration("20231025124111_UpdateTransfer")]
+    partial class UpdateTransfer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,31 +88,6 @@ namespace EasyPay.Api.Migrations
                     b.ToTable("Clients");
                 });
 
-            modelBuilder.Entity("EasyPay.Api.Models.Images.ImageMetadata", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ClientId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<float>("Size")
-                        .HasColumnType("real");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.ToTable("ImageMetadatas");
-                });
-
             modelBuilder.Entity("EasyPay.Api.Models.Transfers.Transfer", b =>
                 {
                     b.Property<Guid>("TransferId")
@@ -142,15 +120,6 @@ namespace EasyPay.Api.Migrations
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Client");
-                });
-
-            modelBuilder.Entity("EasyPay.Api.Models.Images.ImageMetadata", b =>
-                {
-                    b.HasOne("EasyPay.Api.Models.Clients.Client", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId");
 
                     b.Navigation("Client");
                 });

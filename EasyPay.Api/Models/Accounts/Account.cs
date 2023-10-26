@@ -5,6 +5,7 @@
 
 using EasyPay.Api.Models.Clients;
 using System;
+using System.Text.Json.Serialization;
 
 namespace EasyPay.Api.Models.Accounts
 {
@@ -14,7 +15,9 @@ namespace EasyPay.Api.Models.Accounts
         public string Login { get; set; }
         public string Password { get; set; }
         public string AccountNumber { get; set; }
+        [JsonIgnore]
         public decimal Balance { get; set; }
+        [JsonIgnore]
         public Guid ClientId { get; set; }
         public Client Client { get; set; }
     }
