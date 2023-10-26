@@ -1,8 +1,14 @@
 ﻿using EasyPay.Api.Models.Accounts.Exceptions;
+using EasyPay.Api.Models.Clients;
+using EasyPay.Api.Models.Transfers;
 using EasyPay.Api.Models.Transfers.Exceptions;
 using EasyPay.Api.Services.Foundations.Transfers;
+using EasyPay.Api.Services.Processings.Transfers;
+using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EasyPay.Api.Controllers
@@ -11,11 +17,12 @@ namespace EasyPay.Api.Controllers
     [Route("api/[controller]")]
     public class TransferController : RESTFulController
     {
-        private readonly ITransferService transferService;
 
-        public TransferController(ITransferService transferService)
+        private readonly ITransferProcessingService transferProcessingService;
+
+        public TransferController(ITransferProcessingService transferProcessingService)
         {
-            this.transferService = transferService;
+            this.transferProcessingService = transferProcessingService;
         }
 
         [HttpPost("Transfer")]
@@ -23,8 +30,8 @@ namespace EasyPay.Api.Controllers
         {
             try
             {
-                var updatedBalance = await this.transferService
-                    .MakeTransferAsync(sourceAccountNumber, receiverAccountNumber, amount);
+                var updatedBalance = await this.transferProcessingService
+                    .MakeAndInsertTransferAsync(sourceAccountNumber, receiverAccountNumber, amount);
 
                 return Ok("Your balance: " + updatedBalance);
             }
@@ -63,7 +70,7 @@ namespace EasyPay.Api.Controllers
         {
             try
             {
-                var updatedBalance = await transferService.DepositAsync(accountNumber, amount);
+                var updatedBalance = await transferProcessingService.DepositAsync(accountNumber, amount);
 
                 return Ok("Your balance: " + updatedBalance);
             }
@@ -94,7 +101,7 @@ namespace EasyPay.Api.Controllers
         {
             try
             {
-                var balance = await transferService.CheckBalanceAsync(accountNumber);
+                var balance = await transferProcessingService.CheckBalanceAsync(accountNumber);
 
                 return Ok("Your balance: " + balance);
             }
@@ -114,6 +121,38 @@ namespace EasyPay.Api.Controllers
             {
                 return InternalServerError(serviceException.InnerException);
             }
+        }
+
+        [HttpGet("ById")]
+        public async ValueTask<ActionResult<Transfer>> GetTransferByIdAsync(Guid transferId)
+        {
+            var transfer = await this.transferProcessingService.RetrieveTransferByIdAsync(transferId);
+
+            return Ok(transfer);
+        }
+
+        [HttpGet]
+        public ActionResult<IQueryable<Transfer>> GetAllTransfers()
+        {
+            IQueryable<Transfer> transfers = this.transferProcessingService.RetrieveAllTransfers();
+
+            return Ok(transfers);
+        }
+
+        [HttpPut]
+        public async ValueTask<ActionResult<Transfer>> PutTransferAsync(Transfer transfer)
+        {
+            var modifyTransfer = await this.transferProcessingService.ModifyTransferAsync(transfer);
+
+            return Ok(modifyTransfer);
+        }
+
+        [HttpDelete]
+        public async ValueTask<ActionResult<Transfer>> DeleteTransferAsync(Guid transferId)
+        {
+            var deleteTransfer = await this.transferProcessingService.RemoveTransferByIdAsync(transferId);
+
+            return Ok(deleteTransfer);
         }
     }
 }

@@ -15,11 +15,35 @@ namespace EasyPay.Api.Services.Foundations.Transfers
     {
         public void ValidateTransferOnAdd(Transfer transfer)
         {
+            ValidateTRansferNotNull(transfer);
+
             Validate(
                 (Rule: IsInvalid(transfer.TransferId), Parameter: nameof(Transfer.TransferId)),
                 (Rule: IsInvalid(transfer.SourceAccountNumber), Parameter: nameof(Transfer.SourceAccountNumber)),
                 (Rule: IsInvalid(transfer.ReceiverAccountNumber), Parameter: nameof(Transfer.ReceiverAccountNumber)),
                 (Rule: IsInvalid(transfer.Amount), Parameter: nameof(Transfer.Amount)));
+        }
+
+        public void ValidateTransferOnModify(Transfer transfer)
+        {
+            ValidateTRansferNotNull(transfer);
+
+            Validate(
+                (Rule: IsInvalid(transfer.TransferId), Parameter: nameof(Transfer.TransferId)),
+                (Rule: IsInvalid(transfer.SourceAccountNumber), Parameter: nameof(Transfer.SourceAccountNumber)),
+                (Rule: IsInvalid(transfer.ReceiverAccountNumber), Parameter: nameof(Transfer.ReceiverAccountNumber)),
+                (Rule: IsInvalid(transfer.Amount), Parameter: nameof(Transfer.Amount)));
+        }
+
+        private static void ValidateAndAgainstStorageTransferOnModify(Transfer maybeTransfer, Transfer transfer)
+        {
+            ValidateStorageTransfer(maybeTransfer, transfer.TransferId);
+
+            Validate(
+                (Rule: IsInvalid(maybeTransfer.TransferId), Parameter: nameof(Transfer.TransferId)),
+                (Rule: IsInvalid(maybeTransfer.SourceAccountNumber), Parameter: nameof(Transfer.SourceAccountNumber)),
+                (Rule: IsInvalid(maybeTransfer.ReceiverAccountNumber), Parameter: nameof(Transfer.ReceiverAccountNumber)),
+                (Rule: IsInvalid(maybeTransfer.Amount), Parameter: nameof(Transfer.Amount)));
         }
 
         private static dynamic IsInvalid(Guid trnasferId) => new
@@ -40,40 +64,22 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             Message = "Amount is required"
         };
 
-        private static void ValidateAccountNotFoundForTransfer(Account sourceAccount,
-            string sourceAccountNumber, Account recieverAccount, string reveiverAccountNumber)
+        private static void ValidateTransferId(Guid transferId) =>
+            Validate((Rule: IsInvalid(transferId), Parameter: nameof(Transfer.TransferId)));
+
+        private static void ValidateTRansferNotNull(Transfer transfer)
         {
-            if (sourceAccount == null)
+            if (transfer is null)
             {
-                throw new NotFoundAccountByAccountNumberException(sourceAccountNumber);
-            }
-            if (recieverAccount == null)
-            {
-                throw new NotFoundAccountByAccountNumberException(reveiverAccountNumber);
+                throw new NullTransferException();
             }
         }
 
-        private static void ValidateAccountNotFoundForTransfer(Account account, string accountNumber)
+        private static void ValidateStorageTransfer(Transfer maybeTransfer, Guid transferId)
         {
-            if (account == null)
+            if (maybeTransfer is null)
             {
-                throw new NotFoundAccountByAccountNumberException(accountNumber);
-            }
-        }
-
-        private static void ValidateAccountInsufficientFunds(decimal amount, Account sourceAccount)
-        {
-            if (sourceAccount.Balance < amount)
-            {
-                throw new InsufficientFundsException();
-            }
-        }
-
-        private static void ValidateTransferAmount(decimal amount)
-        {
-            if (amount < 0)
-            {
-                throw new NegativeAmountException();
+                throw new NotFoundTransferException(transferId);
             }
         }
 

@@ -12,7 +12,8 @@ namespace EasyPay.Api.Models.Transfers
     {
         public Guid TransferId { get; set; }
         public decimal Amount { get; set; }
-        public Account Accounts { get; set; }
+        string Password {  get; set; }
+        public Account Account { get; set; }
         public string SourceAccountNumber { get; set; }
         public string ReceiverAccountNumber { get; set; }
     }

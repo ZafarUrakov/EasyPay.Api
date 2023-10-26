@@ -9,12 +9,17 @@ using EasyPay.Api.Brokers.Storages;
 using EasyPay.Api.Services.Foundations.Accounts;
 using EasyPay.Api.Services.Foundations.Clients;
 using EasyPay.Api.Services.Foundations.Transfers;
+using EasyPay.Api.Services.Processings;
+using EasyPay.Api.Services.Processings.Accounts;
+using EasyPay.Api.Services.Processings.Clients;
+using EasyPay.Api.Services.Processings.Transfers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 
 namespace EasyPay.Api
 {
@@ -29,12 +34,21 @@ namespace EasyPay.Api
         {
 
             services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+                });
+
             services.AddTransient<IStorageBroker, StorageBroker>();
             services.AddTransient<ILoggingBroker, LoggingBroker>();
             services.AddTransient<IDateTimeBroker, DateTimeBroker>();
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IClientService, ClientService>();
             services.AddTransient<ITransferService, TransferService>();
+            services.AddTransient<IClientProcessingService, ClientProcessingService>();
+            services.AddTransient<IAccountProcessingService, AccountProcessingService>();
+            services.AddTransient<ITransferProcessingService, TransferProcessingService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EasyPay.Api", Version = "v1" });
