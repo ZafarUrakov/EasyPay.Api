@@ -6,6 +6,7 @@
 using EasyPay.Api.Brokers.DateTimes;
 using EasyPay.Api.Brokers.Loggings;
 using EasyPay.Api.Brokers.Storages;
+using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Transfers;
 using System;
 using System.Linq;
@@ -30,16 +31,17 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<Transfer> MakeAndInsertTransferAsync(
+        public ValueTask<Transfer> MakeAndInsertTransferAsync(Account account, 
             string sourceAccountNumber, string receiverAccountNumber, decimal amount) =>
         TryCatch(async () =>
         {
             Transfer transfer = new Transfer
             {
                 TransferId = Guid.NewGuid(),
+                Account = account,
                 Amount = amount,
-                ReceiverAccountNumber = receiverAccountNumber,
                 SourceAccountNumber = sourceAccountNumber,
+                ReceiverAccountNumber = receiverAccountNumber,
             };
 
             ValidateTransferOnAdd(transfer);

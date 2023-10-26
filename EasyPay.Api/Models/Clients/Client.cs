@@ -12,7 +12,6 @@ namespace EasyPay.Api.Models.Clients
 {
     public class Client
     {
-        [JsonIgnore]
         public Guid ClientId { get; set; }
         [JsonIgnore]
         public string AccountNumber { get; set; }

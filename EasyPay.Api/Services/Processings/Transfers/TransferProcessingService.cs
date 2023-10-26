@@ -60,8 +60,8 @@ namespace EasyPay.Api.Services.Processings
             await this.storageBroker.SaveChangesTransferAsync(sourceAccount);
             await this.storageBroker.SaveChangesTransferAsync(recieverAccount);
 
-            await this.transferService.MakeAndInsertTransferAsync(
-                receiverAccountNumber, sourceAccountNumber, amount);
+            await this.transferService.MakeAndInsertTransferAsync(sourceAccount,
+                sourceAccountNumber, receiverAccountNumber, amount);
 
             return sourceAccount.Balance;
         });

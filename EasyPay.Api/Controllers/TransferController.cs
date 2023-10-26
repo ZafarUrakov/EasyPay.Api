@@ -1,10 +1,14 @@
 ﻿using EasyPay.Api.Models.Accounts.Exceptions;
+using EasyPay.Api.Models.Clients;
+using EasyPay.Api.Models.Transfers;
 using EasyPay.Api.Models.Transfers.Exceptions;
 using EasyPay.Api.Services.Foundations.Transfers;
 using EasyPay.Api.Services.Processings.Transfers;
 using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EasyPay.Api.Controllers
@@ -117,6 +121,38 @@ namespace EasyPay.Api.Controllers
             {
                 return InternalServerError(serviceException.InnerException);
             }
+        }
+
+        [HttpGet("ById")]
+        public async ValueTask<ActionResult<Transfer>> GetTransferByIdAsync(Guid transferId)
+        {
+            var transfer = await this.transferProcessingService.RetrieveTransferByIdAsync(transferId);
+
+            return Ok(transfer);
+        }
+
+        [HttpGet]
+        public ActionResult<IQueryable<Transfer>> GetAllTransfers()
+        {
+            IQueryable<Transfer> transfers = this.transferProcessingService.RetrieveAllTransfers();
+
+            return Ok(transfers);
+        }
+
+        [HttpPut]
+        public async ValueTask<ActionResult<Transfer>> PutTransferAsync(Transfer transfer)
+        {
+            var modifyTransfer = await this.transferProcessingService.ModifyTransferAsync(transfer);
+
+            return Ok(modifyTransfer);
+        }
+
+        [HttpDelete]
+        public async ValueTask<ActionResult<Transfer>> DeleteTransferAsync(Guid tranferId)
+        {
+            var deleteTransfer = await this.transferProcessingService.RemoveTransferByIdAsync(tranferId);
+
+            return Ok(deleteTransfer);
         }
     }
 }

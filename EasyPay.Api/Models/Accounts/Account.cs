@@ -11,7 +11,6 @@ namespace EasyPay.Api.Models.Accounts
 {
     public class Account
     {
-        [JsonIgnore]
         public Guid AccountId { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
