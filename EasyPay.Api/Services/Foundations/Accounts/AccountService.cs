@@ -58,6 +58,8 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         {
             Account maybeAccount = await this.storageBroker.SelectAccountByAccountNumberAsync(accountNumber);
 
+            ValidateAccountNotFoundByAccountNumber(maybeAccount, accountNumber);
+
             return maybeAccount;
         });
 

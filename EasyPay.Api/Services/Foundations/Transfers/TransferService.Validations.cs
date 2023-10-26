@@ -5,7 +5,6 @@
 
 using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Accounts.Exceptions;
-using EasyPay.Api.Models.Clients;
 using EasyPay.Api.Models.Transfers;
 using EasyPay.Api.Models.Transfers.Exceptions;
 using System;
@@ -16,11 +15,35 @@ namespace EasyPay.Api.Services.Foundations.Transfers
     {
         public void ValidateTransferOnAdd(Transfer transfer)
         {
+            ValidateTRansferNotNull(transfer);
+
             Validate(
                 (Rule: IsInvalid(transfer.TransferId), Parameter: nameof(Transfer.TransferId)),
                 (Rule: IsInvalid(transfer.SourceAccountNumber), Parameter: nameof(Transfer.SourceAccountNumber)),
                 (Rule: IsInvalid(transfer.ReceiverAccountNumber), Parameter: nameof(Transfer.ReceiverAccountNumber)),
                 (Rule: IsInvalid(transfer.Amount), Parameter: nameof(Transfer.Amount)));
+        }
+
+        public void ValidateTransferOnModify(Transfer transfer)
+        {
+            ValidateTRansferNotNull(transfer);
+
+            Validate(
+                (Rule: IsInvalid(transfer.TransferId), Parameter: nameof(Transfer.TransferId)),
+                (Rule: IsInvalid(transfer.SourceAccountNumber), Parameter: nameof(Transfer.SourceAccountNumber)),
+                (Rule: IsInvalid(transfer.ReceiverAccountNumber), Parameter: nameof(Transfer.ReceiverAccountNumber)),
+                (Rule: IsInvalid(transfer.Amount), Parameter: nameof(Transfer.Amount)));
+        }
+
+        private static void ValidateAndAgainstStorageTransferOnModify(Transfer maybeTransfer, Transfer transfer)
+        {
+            ValidateStorageTransfer(maybeTransfer, transfer.TransferId);
+
+            Validate(
+                (Rule: IsInvalid(maybeTransfer.TransferId), Parameter: nameof(Transfer.TransferId)),
+                (Rule: IsInvalid(maybeTransfer.SourceAccountNumber), Parameter: nameof(Transfer.SourceAccountNumber)),
+                (Rule: IsInvalid(maybeTransfer.ReceiverAccountNumber), Parameter: nameof(Transfer.ReceiverAccountNumber)),
+                (Rule: IsInvalid(maybeTransfer.Amount), Parameter: nameof(Transfer.Amount)));
         }
 
         private static dynamic IsInvalid(Guid trnasferId) => new
@@ -54,32 +77,25 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             }
         }
 
-        private static void ValidateAccountNotFoundForTransfer(Account account, string accountNumber)
-        {
-            if (account == null)
-            {
-                throw new NotFoundAccountByAccountNumberException(accountNumber);
-            }
-        }
-
-        private static void ValidateAccountInsufficientFunds(decimal amount, Account sourceAccount)
-        {
-            if (sourceAccount.Balance < amount)
-            {
-                throw new InsufficientFundsException();
-            }
-        }
-
-        private static void ValidateTransferAmount(decimal amount)
-        {
-            if (amount < 0)
-            {
-                throw new NegativeAmountException();
-            }
-        }
-
         private static void ValidateTransferId(Guid transferId) =>
             Validate((Rule: IsInvalid(transferId), Parameter: nameof(Transfer.TransferId)));
+
+        private static void ValidateTRansferNotNull(Transfer transfer)
+        {
+            if (transfer is null)
+            {
+                throw new NullTransferException();
+            }
+        }
+
+        private static void ValidateStorageTransfer(Transfer maybeTransfer, Guid transferId)
+        {
+            if (maybeTransfer is null)
+            {
+                throw new NotFoundTransferException(transferId);
+            }
+        }
+
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {

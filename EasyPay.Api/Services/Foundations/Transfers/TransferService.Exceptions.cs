@@ -19,19 +19,26 @@ namespace EasyPay.Api.Services.Foundations.Transfers
 {
     public partial class TransferService
     {
-        private delegate ValueTask<decimal> ReturningAmountFunctions();
         private delegate ValueTask<Transfer> ReturningTransferFunctions();
         private delegate IQueryable<Transfer> ReturningTransfersFunction();
 
-        private async ValueTask<decimal> TryCatch(ReturningAmountFunctions returningAmountFunctions)
+        private async ValueTask<Transfer> TryCatch(ReturningTransferFunctions returningTransferFunctions)
         {
             try
             {
-                return await returningAmountFunctions();
+                return await returningTransferFunctions();
             }
-            catch (NotFoundAccountByAccountNumberException notFoundAccountByAccountNumberException)
+            catch(NullTransferException nullTransferException)
             {
-                throw CreateAndLogAccountValidationException(notFoundAccountByAccountNumberException);
+                throw CreateAndLogTransferValidationException(nullTransferException);
+            }
+            catch(InvalidTransferException invalidTransferException)
+            {
+                throw CreateAndLogTransferValidationException(invalidTransferException);
+            }
+            catch(NotFoundTransferException notFoundTransferException)
+            {
+                throw CreateAndLogTransferValidationException(notFoundTransferException);
             }
             catch (InsufficientFundsException insufficientFundsException)
             {
@@ -67,35 +74,6 @@ namespace EasyPay.Api.Services.Foundations.Transfers
                 var failedAccountServiceException
                     = new FailedAccountServiceException(exception);
 
-                throw CreateAndLogAccountServiceException(failedAccountServiceException);
-            }
-        }
-
-        private async ValueTask<Transfer> TryCatch(ReturningTransferFunctions returningTransferFunctions)
-        {
-            try
-            {
-                return await returningTransferFunctions();
-            }
-            catch (SqlException sqlException)
-            {
-                FailedStorageTransferException failedStorageTransferException =
-                    new FailedStorageTransferException(sqlException);
-
-                throw CreateAndLogCriticalDependencyException(failedStorageTransferException);
-            }
-            catch (DbUpdateException dbUpdateException)
-            {
-                var failedStorageAccountException
-                    = new FailedStorageAccountException(dbUpdateException);
-
-                throw CreateAndLogDependencyException(failedStorageAccountException);
-            }
-            catch (Exception exception)
-            {
-                var failedAccountServiceException
-                    = new FailedAccountServiceException(exception);
-
                 throw CreateAndLogTransferServiceException(failedAccountServiceException);
             }
         }
@@ -108,11 +86,17 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             }
             catch (SqlException sqlException)
             {
-                throw new Exception("sqlexc");
+                var failedStorageTransferException =
+                    new FailedStorageTransferException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedStorageTransferException);
             }
             catch (Exception exception)
             {
-                throw new Exception("serverException");
+                var failedStorageTransferException =
+                    new FailedStorageTransferException(exception);
+
+                throw CreateAndLogTransferServiceException(failedStorageTransferException);
             }
         }
 
@@ -123,14 +107,6 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             this.loggingBroker.LogError(transferValidationException);
 
             return transferValidationException;
-        }
-        private AccountValidationException CreateAndLogAccountValidationException(Xeption exception)
-        {
-            var accountValidationException = new AccountValidationException(exception);
-
-            this.loggingBroker.LogError(accountValidationException);
-
-            return accountValidationException;
         }
 
         private AccountDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
@@ -163,15 +139,6 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             return accountDependencyException;
         }
 
-        private AccountServiceException CreateAndLogAccountServiceException(Xeption exception)
-        {
-            var accountServiceException =
-                new AccountServiceException(exception);
-
-            this.loggingBroker.LogError(accountServiceException);
-
-            return accountServiceException;
-        }
         private TransferServiceException CreateAndLogTransferServiceException(Xeption exception)
         {
             var rtansferServiceException =

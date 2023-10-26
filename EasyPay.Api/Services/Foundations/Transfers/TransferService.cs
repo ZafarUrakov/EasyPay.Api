@@ -54,28 +54,36 @@ namespace EasyPay.Api.Services.Foundations.Transfers
 
             Transfer maybeTransfer = await this.storageBroker.SelectTransferByIdAsync(transferId);
 
+            ValidateStorageTransfer(maybeTransfer, transferId);
+
             return maybeTransfer;
         });
 
         public IQueryable<Transfer> RetrieveAllTransfers() =>
             TryCatch(() => this.storageBroker.SelectAllTransfers());
 
-        public ValueTask<Transfer> ModifyTransferAsync(Transfer Transfer) =>
+        public ValueTask<Transfer> ModifyTransferAsync(Transfer transfer) =>
         TryCatch(async () =>
         {
-            Transfer maybeTransfer =
-                await this.storageBroker.SelectTransferByIdAsync(Transfer.TransferId);
+            ValidateTransferOnModify(transfer);
 
-            return await this.storageBroker.UpdateTransferAsync(Transfer);
+            Transfer maybeTransfer =
+                await this.storageBroker.SelectTransferByIdAsync(transfer.TransferId);
+
+            ValidateAndAgainstStorageTransferOnModify(transfer, maybeTransfer);
+
+            return await this.storageBroker.UpdateTransferAsync(transfer);
         });
 
-        public ValueTask<Transfer> RemoveTransferByIdAsync(Guid TransferId) =>
+        public ValueTask<Transfer> RemoveTransferByIdAsync(Guid transferId) =>
          TryCatch(async () =>
          {
-             ValidateTransferId(TransferId);
+             ValidateTransferId(transferId);
 
              Transfer maybeTransfer =
-                 await this.storageBroker.SelectTransferByIdAsync(TransferId);
+                 await this.storageBroker.SelectTransferByIdAsync(transferId);
+
+             ValidateStorageTransfer(maybeTransfer, transferId);
 
              return await this.storageBroker.DeleteTransferAsync(maybeTransfer);
          });

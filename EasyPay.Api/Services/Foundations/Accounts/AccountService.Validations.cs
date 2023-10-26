@@ -73,6 +73,24 @@ namespace EasyPay.Api.Services.Foundations.Accounts
             Message = "Id is required"
         };
 
+        private void ValidateAccountId(Guid accountId) =>
+            Validate((Rule: IsInvalid(accountId), Parameter: nameof(Account.AccountId)));
+
+        private void ValidateStorageAccount(Account maybeAccount, Guid accountId)
+        {
+            if (maybeAccount is null)
+            {
+                throw new NotFoundAccountException(accountId);
+            }
+        }
+        private static void ValidateAccountNotFoundByAccountNumber(Account account, string accountNumber)
+        {
+            if (account == null)
+            {
+                throw new NotFoundAccountByAccountNumberException(accountNumber);
+            }
+        }
+
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
             var invalidAccountException = new InvalidAccountException();
@@ -88,17 +106,6 @@ namespace EasyPay.Api.Services.Foundations.Accounts
             }
 
             invalidAccountException.ThrowIfContainsErrors();
-        }
-
-        private void ValidateAccountId(Guid accountId) =>
-            Validate((Rule: IsInvalid(accountId), Parameter: nameof(Account.AccountId)));
-
-        private void ValidateStorageAccount(Account maybeAccount, Guid accountId)
-        {
-            if (maybeAccount is null)
-            {
-                throw new NotFoundAccountException(accountId);
-            }
         }
     }
 }
