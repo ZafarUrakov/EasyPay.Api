@@ -25,19 +25,11 @@ namespace EasyPay.Api.Services.Processings.Accounts
             var maybeAccount = await accountService
                 .RetrieveAccountByLogingAndAccountNumberAsync(account.Login, account.AccountNumber);
 
-            Account fullAccount = new Account
-            {
-                AccountId = maybeAccount.AccountId,
-                Password = account.Password,
-                Login = account.Login,
-                AccountNumber = account.AccountNumber,
-                Client = maybeAccount.Client,
-                ClientId = maybeAccount.ClientId
-            };
+            var modifyAccount = CreateAccount(account, maybeAccount);
 
-            await accountService.ModifyAccountAsync(fullAccount);
+            await accountService.ModifyAccountAsync(modifyAccount);
 
-            return fullAccount;
+            return modifyAccount;
         }
 
         public async ValueTask<Account> RetrieveAccountByIdAsync(Guid accountId) =>
@@ -51,5 +43,18 @@ namespace EasyPay.Api.Services.Processings.Accounts
 
         public async ValueTask<Account> RemoveAccountByIdAsync(Guid accountId) =>
             await accountService.RemoveAccountByIdAsync(accountId);
+
+        private static Account CreateAccount(Account account, Account maybeAccount)
+        {
+            return new Account
+            {
+                AccountId = maybeAccount.AccountId,
+                Password = account.Password,
+                Login = account.Login,
+                AccountNumber = account.AccountNumber,
+                Client = maybeAccount.Client,
+                ClientId = maybeAccount.ClientId
+            };
+        }
     }
 }

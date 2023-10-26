@@ -19,7 +19,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
                 (Rule: IsInvalid(account.AccountId), Parameter: nameof(Account.AccountId)),
                 (Rule: IsInvalid(account.AccountNumber), Parameter: nameof(Account.AccountNumber)),
                 (Rule: IsInvalid(account.Login), Parameter: nameof(Account.Login)),
-                //(Rule: IsInvalid(account.Password), Parameter: nameof(Account.Password)),
+                (Rule: IsInvalid(account.Password), Parameter: nameof(Account.Password)),
                 (Rule: IsInvalid(account.ClientId), Parameter: nameof(Account.ClientId)));
         }
 
@@ -83,11 +83,20 @@ namespace EasyPay.Api.Services.Foundations.Accounts
                 throw new NotFoundAccountException(accountId);
             }
         }
+
         private static void ValidateAccountNotFoundByAccountNumber(Account account, string accountNumber)
         {
             if (account == null)
             {
                 throw new NotFoundAccountByAccountNumberException(accountNumber);
+            }
+        }
+
+        private static void ValidateAccountNotFoundWithLoginOrAccountNumber(string login, string accountNumber, Account maybeAccount)
+        {
+            if (maybeAccount is null)
+            {
+                throw new NotFoundAccountWithLoginOrAccountNumber(login, accountNumber);
             }
         }
 

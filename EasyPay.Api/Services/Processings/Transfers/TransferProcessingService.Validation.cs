@@ -13,55 +13,14 @@ namespace EasyPay.Api.Services.Processings
 {
     public partial class TransferProcessingService
     {
-        public void ValidateTransferOnAdd(Transfer transfer)
+        public void ValidateTransferOnAdd(Account sourceAccount, decimal amount)
         {
-            Validate(
-                (Rule: IsInvalid(transfer.TransferId), Parameter: nameof(Transfer.TransferId)),
-                (Rule: IsInvalid(transfer.SourceAccountNumber), Parameter: nameof(Transfer.SourceAccountNumber)),
-                (Rule: IsInvalid(transfer.ReceiverAccountNumber), Parameter: nameof(Transfer.ReceiverAccountNumber)),
-                (Rule: IsInvalid(transfer.Amount), Parameter: nameof(Transfer.Amount)));
+            ValidateTransferAmount(amount);
+
+            ValidateAccountInsufficientFunds(sourceAccount, amount);
         }
 
-        private static dynamic IsInvalid(Guid trnasferId) => new
-        {
-            Condition = trnasferId == default,
-            Message = "Id is required"
-        };
-
-        private static dynamic IsInvalid(string text) => new
-        {
-            Condition = String.IsNullOrWhiteSpace(text),
-            Message = "Text is required"
-        };
-
-        private static dynamic IsInvalid(decimal amount) => new
-        {
-            Condition = amount == default,
-            Message = "Amount is required"
-        };
-
-        private static void ValidateAccountNotFoundForTransfer(Account sourceAccount,
-            string sourceAccountNumber, Account recieverAccount, string reveiverAccountNumber)
-        {
-            if (sourceAccount == null)
-            {
-                throw new NotFoundAccountByAccountNumberException(sourceAccountNumber);
-            }
-            if (recieverAccount == null)
-            {
-                throw new NotFoundAccountByAccountNumberException(reveiverAccountNumber);
-            }
-        }
-
-        private static void ValidateAccountNotFoundForTransfer(Account account, string accountNumber)
-        {
-            if (account == null)
-            {
-                throw new NotFoundAccountByAccountNumberException(accountNumber);
-            }
-        }
-
-        private static void ValidateAccountInsufficientFunds(decimal amount, Account sourceAccount)
+        private static void ValidateAccountInsufficientFunds(Account sourceAccount, decimal amount)
         {
             if (sourceAccount.Balance < amount)
             {

@@ -13,7 +13,7 @@ namespace EasyPay.Api.Services.Foundations.Transfers
 {
     public interface ITransferService
     {
-        ValueTask<Transfer> MakeAndInsertTransferAsync(Account account,
+        ValueTask<Transfer> MakeAndAddTransferAsync(Account account,
             string sourceAccountNumber, string receiverAccountNumber, decimal amount);
         IQueryable<Transfer> RetrieveAllTransfers(); 
         ValueTask<Transfer> RetrieveTransferByIdAsync(Guid TransferId);

@@ -7,6 +7,7 @@ using EasyPay.Api.Brokers.DateTimes;
 using EasyPay.Api.Brokers.Loggings;
 using EasyPay.Api.Brokers.Storages;
 using EasyPay.Api.Models.Accounts;
+using EasyPay.Api.Models.Accounts.Exceptions;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -43,7 +44,8 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         {
             ValidateAccountId(accountId);
 
-            Account maybeAccount = await this.storageBroker.SelectAccountByIdAsync(accountId);
+            var maybeAccount = 
+                await this.storageBroker.SelectAccountByIdAsync(accountId);
 
             ValidateStorageAccount(maybeAccount, accountId);
 
@@ -56,7 +58,8 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         public ValueTask<Account> RetrieveAccountByAccountNumberAsync(string accountNumber) =>
         TryCatch(async () =>
         {
-            Account maybeAccount = await this.storageBroker.SelectAccountByAccountNumberAsync(accountNumber);
+            var maybeAccount = 
+                await this.storageBroker.SelectAccountByAccountNumberAsync(accountNumber);
 
             ValidateAccountNotFoundByAccountNumber(maybeAccount, accountNumber);
 
@@ -69,20 +72,18 @@ namespace EasyPay.Api.Services.Foundations.Accounts
             var maybeAccount = await this.storageBroker
                 .SelectAccountByLoginAndAccountNumber(login, accountNumber);
 
-            if (maybeAccount is null)
-            {
-                throw new Exception("Not found account with login and id");
-            }
+            ValidateAccountNotFoundWithLoginOrAccountNumber(login, accountNumber, maybeAccount);
 
             return maybeAccount;
         }
+
 
         public ValueTask<Account> ModifyAccountAsync(Account account) =>
         TryCatch(async () =>
         {
             ValidateAccountOnModify(account);
 
-            Account maybeAccount =
+            var maybeAccount =
                 await this.storageBroker.SelectAccountByIdAsync(account.AccountId);
 
             ValidateAgainstStorageAccountOnModify(inputAccount: account, storageAccount: maybeAccount);
@@ -95,7 +96,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         {
             ValidateAccountId(accountId);
 
-            Account maybeAccount =
+            var maybeAccount =
                 await this.storageBroker.SelectAccountByIdAsync(accountId);
 
             ValidateStorageAccount(maybeAccount, accountId);

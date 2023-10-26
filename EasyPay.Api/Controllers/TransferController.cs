@@ -148,9 +148,9 @@ namespace EasyPay.Api.Controllers
         }
 
         [HttpDelete]
-        public async ValueTask<ActionResult<Transfer>> DeleteTransferAsync(Guid tranferId)
+        public async ValueTask<ActionResult<Transfer>> DeleteTransferAsync(Guid transferId)
         {
-            var deleteTransfer = await this.transferProcessingService.RemoveTransferByIdAsync(tranferId);
+            var deleteTransfer = await this.transferProcessingService.RemoveTransferByIdAsync(transferId);
 
             return Ok(deleteTransfer);
         }

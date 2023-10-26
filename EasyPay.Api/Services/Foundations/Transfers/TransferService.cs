@@ -31,18 +31,11 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<Transfer> MakeAndInsertTransferAsync(Account account, 
+        public ValueTask<Transfer> MakeAndAddTransferAsync(Account account, 
             string sourceAccountNumber, string receiverAccountNumber, decimal amount) =>
         TryCatch(async () =>
         {
-            Transfer transfer = new Transfer
-            {
-                TransferId = Guid.NewGuid(),
-                Account = account,
-                Amount = amount,
-                SourceAccountNumber = sourceAccountNumber,
-                ReceiverAccountNumber = receiverAccountNumber,
-            };
+            var transfer = CreateTransfer(account, sourceAccountNumber, receiverAccountNumber, amount);
 
             ValidateTransferOnAdd(transfer);
 
@@ -89,5 +82,18 @@ namespace EasyPay.Api.Services.Foundations.Transfers
 
              return await this.storageBroker.DeleteTransferAsync(maybeTransfer);
          });
+
+        private static Transfer CreateTransfer(Account account, string sourceAccountNumber,
+            string receiverAccountNumber, decimal amount)
+        {
+            return new Transfer
+            {
+                TransferId = Guid.NewGuid(),
+                Account = account,
+                Amount = amount,
+                SourceAccountNumber = sourceAccountNumber,
+                ReceiverAccountNumber = receiverAccountNumber,
+            };
+        }
     }
 }

@@ -31,14 +31,7 @@ namespace EasyPay.Api.Services.Processings.Clients
             client.AccountNumber = RandomNumber().ToString();
             client.Accounts = new List<Account>();
 
-            Account account = new Account
-            {
-                AccountId = Guid.NewGuid(),
-                Login = client.Login,
-                AccountNumber = client.AccountNumber,
-                ClientId = client.ClientId,
-                Client = client,
-            };
+            var account = CreateAccount(client);
 
             await clientService.AddClientAsync(client);
 
@@ -59,7 +52,19 @@ namespace EasyPay.Api.Services.Processings.Clients
         public async ValueTask<Client> RemoveClientByIdAsync(Guid clientId) =>
             await clientService.RemoveClientByIdAsync(clientId);
 
-        public int RandomNumber()
+        private static Account CreateAccount(Client client)
+        {
+            return new Account
+            {
+                AccountId = Guid.NewGuid(),
+                Login = client.Login,
+                AccountNumber = client.AccountNumber,
+                ClientId = client.ClientId,
+                Client = client,
+            };
+        }
+
+        private int RandomNumber()
         {
             Random random = new Random();
 
