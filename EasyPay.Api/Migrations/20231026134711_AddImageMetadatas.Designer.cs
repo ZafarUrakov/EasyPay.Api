@@ -4,6 +4,7 @@ using EasyPay.Api.Brokers.Storages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EasyPay.Api.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    partial class StorageBrokerModelSnapshot : ModelSnapshot
+    [Migration("20231026134711_AddImageMetadatas")]
+    partial class AddImageMetadatas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -74,9 +77,6 @@ namespace EasyPay.Api.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Login")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -116,7 +116,7 @@ namespace EasyPay.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AccountId")
+                    b.Property<Guid?>("AccountsAccountId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Amount")
@@ -130,7 +130,7 @@ namespace EasyPay.Api.Migrations
 
                     b.HasKey("TransferId");
 
-                    b.HasIndex("AccountId");
+                    b.HasIndex("AccountsAccountId");
 
                     b.ToTable("Transfers");
                 });
@@ -157,11 +157,11 @@ namespace EasyPay.Api.Migrations
 
             modelBuilder.Entity("EasyPay.Api.Models.Transfers.Transfer", b =>
                 {
-                    b.HasOne("EasyPay.Api.Models.Accounts.Account", "Account")
+                    b.HasOne("EasyPay.Api.Models.Accounts.Account", "Accounts")
                         .WithMany()
-                        .HasForeignKey("AccountId");
+                        .HasForeignKey("AccountsAccountId");
 
-                    b.Navigation("Account");
+                    b.Navigation("Accounts");
                 });
 
             modelBuilder.Entity("EasyPay.Api.Models.Clients.Client", b =>
