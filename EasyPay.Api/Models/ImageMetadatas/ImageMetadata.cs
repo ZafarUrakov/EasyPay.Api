@@ -14,6 +14,7 @@ namespace EasyPay.Api.Models.Images
         public string Name { get; set; }
         public float Size { get; set; }
         public ImageType Type { get; set; }
+        public Guid ClientId { get; set; }
         public Client Client { get; set; }
     }
 }
