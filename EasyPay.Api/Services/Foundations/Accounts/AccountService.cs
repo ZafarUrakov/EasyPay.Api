@@ -7,7 +7,6 @@ using EasyPay.Api.Brokers.DateTimes;
 using EasyPay.Api.Brokers.Loggings;
 using EasyPay.Api.Brokers.Storages;
 using EasyPay.Api.Models.Accounts;
-using EasyPay.Api.Models.Accounts.Exceptions;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -44,7 +43,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         {
             ValidateAccountId(accountId);
 
-            var maybeAccount = 
+            var maybeAccount =
                 await this.storageBroker.SelectAccountByIdAsync(accountId);
 
             ValidateStorageAccount(maybeAccount, accountId);
@@ -58,7 +57,7 @@ namespace EasyPay.Api.Services.Foundations.Accounts
         public ValueTask<Account> RetrieveAccountByAccountNumberAsync(string accountNumber) =>
         TryCatch(async () =>
         {
-            var maybeAccount = 
+            var maybeAccount =
                 await this.storageBroker.SelectAccountByAccountNumberAsync(accountNumber);
 
             ValidateAccountNotFoundByAccountNumber(maybeAccount, accountNumber);

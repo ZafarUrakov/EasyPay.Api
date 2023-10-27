@@ -3,13 +3,12 @@
 // Manage Your Money Easy
 //===========================
 
+using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Transfers;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
-using EasyPay.Api.Models.Accounts;
-using EasyPay.Api.Models.Clients;
 
 namespace EasyPay.Api.Brokers.Storages
 {

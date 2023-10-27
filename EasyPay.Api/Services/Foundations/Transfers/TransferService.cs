@@ -10,7 +10,6 @@ using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Transfers;
 using System;
 using System.Linq;
-using System.Security.AccessControl;
 using System.Threading.Tasks;
 
 namespace EasyPay.Api.Services.Foundations.Transfers
@@ -31,7 +30,7 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<Transfer> MakeAndAddTransferAsync(Account account, 
+        public ValueTask<Transfer> MakeAndAddTransferAsync(Account account,
             string sourceAccountNumber, string receiverAccountNumber, decimal amount) =>
         TryCatch(async () =>
         {

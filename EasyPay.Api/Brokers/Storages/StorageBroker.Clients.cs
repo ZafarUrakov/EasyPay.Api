@@ -3,7 +3,6 @@
 // Manage Your Money Easy
 //===========================
 
-using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Clients;
 using Microsoft.EntityFrameworkCore;
 using System;

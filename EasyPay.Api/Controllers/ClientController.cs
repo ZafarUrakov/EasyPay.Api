@@ -5,7 +5,6 @@
 
 using EasyPay.Api.Models.Clients;
 using EasyPay.Api.Models.Clients.Exceptions;
-using EasyPay.Api.Services.Foundations.Clients;
 using EasyPay.Api.Services.Processings.Clients;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
