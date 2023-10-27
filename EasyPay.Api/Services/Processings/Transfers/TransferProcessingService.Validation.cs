@@ -3,11 +3,9 @@
 // Manage Your Money Easy
 //===========================
 
-using EasyPay.Api.Models.Accounts.Exceptions;
 using EasyPay.Api.Models.Accounts;
+using EasyPay.Api.Models.Accounts.Exceptions;
 using EasyPay.Api.Models.Transfers.Exceptions;
-using EasyPay.Api.Models.Transfers;
-using System;
 
 namespace EasyPay.Api.Services.Processings
 {

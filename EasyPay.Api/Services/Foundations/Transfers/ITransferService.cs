@@ -15,7 +15,7 @@ namespace EasyPay.Api.Services.Foundations.Transfers
     {
         ValueTask<Transfer> MakeAndAddTransferAsync(Account account,
             string sourceAccountNumber, string receiverAccountNumber, decimal amount);
-        IQueryable<Transfer> RetrieveAllTransfers(); 
+        IQueryable<Transfer> RetrieveAllTransfers();
         ValueTask<Transfer> RetrieveTransferByIdAsync(Guid TransferId);
         ValueTask<Transfer> ModifyTransferAsync(Transfer Transfer);
         ValueTask<Transfer> RemoveTransferByIdAsync(Guid TransferId);

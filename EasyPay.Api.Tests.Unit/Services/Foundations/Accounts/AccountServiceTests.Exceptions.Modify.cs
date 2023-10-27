@@ -68,9 +68,9 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
             Account someAccount = randomAccount;
             Guid accountId = someAccount.AccountId;
             var dbUpdateConcurrencyException = new DbUpdateConcurrencyException();
-            
+
             var lockedAccountException = new LockedAccountException(dbUpdateConcurrencyException);
-            
+
             var expectedAccountDependencyValidationException = new AccountDependencyValidationException(lockedAccountException);
 
             this.storageBrokerMock.Setup(broker =>
@@ -103,7 +103,7 @@ namespace EasyPay.Api.Tests.Unit.Services.Foundations.Accounts
             Account someAccount = randomAccount;
             Guid accountId = someAccount.AccountId;
             var dbUpdateException = new DbUpdateException();
-            
+
             var failedStorageAccountException = new FailedStorageAccountException(dbUpdateException);
 
             var expectedAccountDependencyException =

@@ -4,9 +4,9 @@
 //===========================
 
 using EasyPay.Api.Models.Clients;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
 
 namespace EasyPay.Api.Services.Processings.Clients
 {
