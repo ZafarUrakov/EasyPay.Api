@@ -28,32 +28,33 @@ namespace EasyPay.Api.Services.Foundations.ImagaMetadatas
             this.dateTimeBroker = dateTimeBroker;
             this.loggingBroker = loggingBroker;
         }
-        public async ValueTask<ImageMetadata> AddClientAsync(ImageMetadata imageMetadata)
+        public async ValueTask<ImageMetadata> AddImageMetadataAsync(ImageMetadata imageMetadata)
         {
             return await this.storageBroker.InsertImageMetadataAsync(imageMetadata);
         }
 
-        public async ValueTask<ImageMetadata> ModifyClientAsync(ImageMetadata imageMetadata)
+
+        public IQueryable<ImageMetadata> RetrieveAllImageMetadatas()
+        {
+            return this.storageBroker.SelectAllImageMetadatas();
+        }
+
+        public async ValueTask<ImageMetadata> RetrieveImageMetadataByIdAsync(Guid imageMetadataId)
+        {
+            return await this.storageBroker.SelectImageMetadataByIdAsync(imageMetadataId);
+        }
+
+        public async ValueTask<ImageMetadata> ModifydImageMetadataAsync(ImageMetadata imageMetadata)
         {
             return await this.storageBroker.UpdateImageMetadataAsync(imageMetadata);
         }
 
-        public async ValueTask<ImageMetadata> RemoveClientByIdAsync(Guid locationId)
+        public async ValueTask<ImageMetadata> RemovedImageMetadataByIdAsync(Guid locationId)
         {
             var maybeImageMetadata =
                 await this.storageBroker.SelectImageMetadataByIdAsync(locationId);
 
             return await this.storageBroker.DeleteImageMetadataAsync(maybeImageMetadata);
-        }
-
-        public IQueryable<ImageMetadata> RetrieveAllClients()
-        {
-            return this.storageBroker.SelectAllImageMetadatas();
-        }
-
-        public async ValueTask<ImageMetadata> RetrieveClientByIdAsync(Guid imageMetadataId)
-        {
-            return await this.storageBroker.SelectImageMetadataByIdAsync(imageMetadataId);
         }
     }
 }
