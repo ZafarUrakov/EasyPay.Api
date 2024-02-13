@@ -1,10 +1,7 @@
 ﻿using EasyPay.Api.Models.Accounts.Exceptions;
-using EasyPay.Api.Models.Clients;
 using EasyPay.Api.Models.Transfers;
 using EasyPay.Api.Models.Transfers.Exceptions;
-using EasyPay.Api.Services.Foundations.Transfers;
 using EasyPay.Api.Services.Processings.Transfers;
-using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 using System;

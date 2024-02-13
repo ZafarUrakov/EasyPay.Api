@@ -5,7 +5,6 @@
 
 using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Accounts.Exceptions;
-using EasyPay.Api.Services.Foundations.Accounts;
 using EasyPay.Api.Services.Processings.Accounts;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -57,7 +56,6 @@ namespace EasyPay.Api.Controllers
             {
                 return InternalServerError(accountServiceException.InnerException);
             }
-
         }
 
         [HttpGet("ById")]

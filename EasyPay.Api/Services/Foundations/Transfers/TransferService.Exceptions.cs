@@ -4,8 +4,6 @@
 //===========================
 
 using EasyPay.Api.Models.Accounts.Exceptions;
-using EasyPay.Api.Models.Clients;
-using EasyPay.Api.Models.Clients.Exceptions;
 using EasyPay.Api.Models.Transfers;
 using EasyPay.Api.Models.Transfers.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -28,15 +26,15 @@ namespace EasyPay.Api.Services.Foundations.Transfers
             {
                 return await returningTransferFunctions();
             }
-            catch(NullTransferException nullTransferException)
+            catch (NullTransferException nullTransferException)
             {
                 throw CreateAndLogTransferValidationException(nullTransferException);
             }
-            catch(InvalidTransferException invalidTransferException)
+            catch (InvalidTransferException invalidTransferException)
             {
                 throw CreateAndLogTransferValidationException(invalidTransferException);
             }
-            catch(NotFoundTransferException notFoundTransferException)
+            catch (NotFoundTransferException notFoundTransferException)
             {
                 throw CreateAndLogTransferValidationException(notFoundTransferException);
             }
